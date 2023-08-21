@@ -1,0 +1,51 @@
+﻿@model List<PeachtreeExportedArchive>
+
+<h1>Peachtree Exported Archives</h1>
+
+<table class="table table striped border border-2">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Date</th>
+            <th>Closed</th>
+            <th>Customer_PO</th>
+            <th>Sales_Representative_ID</th>
+            <th>Account</th>
+            <th>Sales_Tax_ID</th>
+            <th>NumDistributions</th>
+            <th>Transfer</th>
+            <th>Qnty</th>
+            <th>Invitem</th>
+            <th>Description</th>
+            <th>GLaccount</th>
+            <th>TaxType</th>
+            <th>Amount</th>
+            <th>SalesTaxAuth</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Date</td>
+                <td>@item.Closed</td>
+                <td>@item.CustomerPo</td>
+                <td>@item.SalesRepresentativeId</td>
+                <td>@item.NumDistributions</td>
+                <td>@item.Account</td>
+                <td>@item.SalesTaxId</td>
+                <td>@item.Transfer</td>
+                <td>@item.Qnty</td>
+                <td>@item.Invitem</td>
+                <td>@item.Description</td>
+                <td>@item.Glaccount</td>
+                <td>@item.TaxType</td>
+                <td>@item.Amount</td>
+                <td>@item.SalesTaxAuth</td>
+               
+            </tr>
+        }
+    </tbody>
+</table>

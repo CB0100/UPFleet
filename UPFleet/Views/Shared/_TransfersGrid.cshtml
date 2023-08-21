@@ -1,0 +1,26 @@
+﻿@model List<Transaction>
+
+<table id="dynamicTableTransfergrid" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Tranaction No.</th>
+            <th>Barge</th>
+            <th>Status</th>
+            <th>Select</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <td>@Model[i].TransactionNo</td>
+                    <td>@Model[i].Barge</td>
+                    <td>@Model[i].Status</td>
+                    <td><a href="@Url.Action("IndexPage", "Home", new { Transactionno = (Model[i].TransactionNo) })">Select</a></td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

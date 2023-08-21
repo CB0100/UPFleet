@@ -1,0 +1,404 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model UPFleet.ViewModels.View_Model
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section CustomCSS{
+    <style>
+        input.form-control {
+            font-size: 12px;
+        }
+
+        select.form-control {
+            font-size: 12px;
+        }
+    </style>
+}
+
+<div class="container mt-lg-1">
+    <div class="row">
+        <div class="col-sm-12 border border-1">
+            <ul class="nav nav-tabs mt-3">
+                <li class="nav-item">
+                    <a href="#home" class="nav-link active" data-bs-toggle="tab">Transaction</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#profile" class="nav-link" data-bs-toggle="tab">Report</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#messages" class="nav-link" data-bs-toggle="tab">Maintenance</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="home">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Barge</label>
+                                <select id="bargeDropdown" class="form-control" @(Model.TransferList is { Count: > 0  } ? "disabled" : "")>
+                                    @foreach (var barge in ViewBag.BargeList)
+                                    {
+                                        <option value="@barge.Barge_Name" selected="@(barge.Barge_Name == Model.Barge?.Barge_Name)">@barge.Barge_Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="statusDropdown" class="form-control">
+                                    <option value="In" selected="@(Model?.Transaction?.Status == "In")">In</option>
+                                    <option value="Out" selected="@(Model?.Transaction?.Status == "Out")">Out</option>
+                                    <option value="Last switched" selected="@(Model?.Transaction?.Status == "Last switched")">Last switched</option>
+                                    <option value="To Bill" selected="@(Model?.Transaction?.Status == "To Bill")">To Bill</option>
+                                    <option value="Billed" selected="@(Model?.Transaction?.Status == "Billed")">Billed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Rate</label>
+                                <input id="rateInput" type="text" class="form-control" value="@Model?.Transaction?.Rate">
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Owner</label>
+                                <input id="ownerInput" type="text" class="form-control" value="@Model?.Barge?.Owner" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-group">
+                                <label>Transaction</label>
+                                @{
+                                    string transactionNo = Model?.Transaction?.TransactionNo.ToString() ?? "";
+                                }
+                                <input id="transactionInput" type="text" class="form-control" value="@transactionNo" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <div class="d-inline-block">
+                                    <a id="addTransactionButton" class="btn btn-outline-warning">Add New Transaction</a>
+                                    <a id="deleteButton" class="btn btn-outline-secondary">Delete this Transaction</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-sm-2">
+                            <div id="recordno" class="form-group">
+                                <label>Record No:</label>
+                                <input id="recordInput" type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="col-sm-10">
+                            <div class="form-group">
+                                <div class="d-inline-block">
+                                    <a id="updateButton" class="btn btn-outline-warning">Update Transaction</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <form id="transferForm" method="post" asp-action="SaveTransfers" asp-controller="Maintenance">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="dynamicTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="w-10">From Date Time</th>
+                                            <th class="w-10">To Date Time</th>
+                                            <th>Status</th>
+                                            <th class="text-nowrap">Fleet Days</th>
+                                            <th class="w-10 text-nowrap">Insurance From Date</th>
+                                            <th class="text-nowrap">Insurance Days</th>
+                                            <th class="text-nowrap"><a id="addRowButton" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Row</a></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.TransferList != null)
+                                        {
+                                            for (int i = 0; i < Model.TransferList.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        <input name="transferlist[@i].Transfer.From" type="datetime-local" class="form-control" value="@Model.TransferList[i].From?.ToString("yyyy-MM-ddTHH:mm")" />
+                                                    </td>
+                                                    <td>
+                                                        <input name="transferlist[@i].Transfer.To" type="datetime-local" class="form-control" value="@Model.TransferList[i].To?.ToString("yyyy-MM-ddTHH:mm")" />
+                                                    </td>
+                                                    <td>
+                                                        <select id="statusDropdown_2" name="transferlist[@i].Transfer.Status" class="form-control">
+                                                            <option value="In" selected="@(Model.TransferList[i].Status == "In")">In</option>
+                                                            <option value="Out" selected="@(Model.TransferList[i].Status == "Out")">Out</option>
+                                                            <option value="Last switched" selected="@(Model.TransferList[i].Status == "Last switched")">Last switched</option>
+                                                            <option value="To Bill" selected="@(Model.TransferList[i].Status == "To Bill")">To Bill</option>
+                                                            <option value="Billed" selected="@(Model.TransferList[i].Status == "Billed")">Billed</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input disabled name="transferlist[@i].Transfer.DaysIn" class="form-control" value="@Model.TransferList[i].DaysIn" />
+                                                    </td>
+                                                    <td>
+                                                        <input name="transferlist[@i].Transfer.FromIns" type="datetime-local" class="form-control" value="@Model.TransferList[i].FromIns" />
+                                                    </td>
+                                                    <td>
+                                                        <input disabled name="transferlist[@i].Transfer.InsuranceDays" class="form-control" value="@Model.TransferList[i].InsuranceDays" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="hidden" name="transferlist[@i].Transfer.ID" value="@Model.TransferList[i].ID" />
+                                                        <input type="hidden" name="transferlist[0].Transfer.transaction" value="@Model.TransferList[0].TransferNO" />
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <input name="transferlist[0].Transfer.From" type="datetime-local" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input name="transferlist[0].Transfer.To" type="datetime-local" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <select id="statusDropdown_2" name="transferlist[0].Transfer.Status" class="form-control">
+                                                        <option value="In">In</option>
+                                                        <option value="Out">Out</option>
+                                                        <option value="Last switched">Last switched</option>
+                                                        <option value="To Bill">To Bill</option>
+                                                        <option value="Billed">Billed</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input disabled name="transferlist[0].Transfer.DaysIn" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input name="transferlist[0].Transfer.FromIns" type="datetime-local" class="form-control" />
+                                                </td>
+                                                <td>
+                                                    <input disabled name="transferlist[0].Transfer.InsuranceDays" class="form-control" />
+                                                </td>
+                                                <td>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="card-action-control">
+                                            <td colspan="7"><button id="savetransfer" style="display: none;" type="submit" class="btn btn-outline-success float-end">Save Transfers</button></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div id="transfersGrid" class="row">
+                                <div class="col-sm-12">
+                                    <h4>Tranactions</h4>
+                                    <div>
+                                        @await Html.PartialAsync("_TransfersGrid", Model.Transactionslist)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                @*Reports*@
+                <div class="tab-pane fade" id="profile">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group mt-3">
+                                    <a asp-action="Owner_reports" asp-controller="Reports" class="btn btn-outline-warning">Owner Report</a>
+                                    <a asp-action="Barge_By_Owner" asp-controller="Reports" class="btn btn-outline-primary">Barges By Owner</a>
+                                    <a asp-action="TransferSummary" asp-controller="Reports" class="btn btn-outline-warning">Preview/Print Transfer</a>
+                                    <a id="previewButton" asp-action="PreviewToExport_Page" asp-controller="Reports" class="btn btn-outline-primary">Preview to Export Transaction</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group mt-3">
+                                    <a asp-action="Not_Billed_TransferSummary_reportpage" asp-controller="Reports" class="btn btn-outline-warning">Not Billed Transfer By Transaction</a>
+                                    <a asp-action="Billed_TransferSummary_reportpage" asp-controller="Reports" class="btn btn-outline-success">Billed Transfer By Transaction</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group d-inline-block">
+                            <a asp-action="View_Exported_Archive" asp-controller="Reports" class="btn btn-outline-primary mt-2">View Exported Archive</a>
+                            <a asp-action="Transfer_Details" asp-controller="Reports" class="btn btn-outline-success mt-2">Transfer Detail-Table View</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="messages">
+                    <div class="form-group mt-2 d-inline-block">
+                        <a href="@Url.Action("BargeUpdate", "Maintenance", new { id = 1})" class="btn btn-outline-primary">Add/Edit Barges</a><br />
+                        <a href="@Url.Action("OwnerUpdate", "Maintenance", new { id = 1})" class="btn btn-outline-warning mt-2">Add/Edit Owners</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var bargeDropdown = document.getElementById("bargeDropdown");
+        var statusDropdown = document.getElementById("statusDropdown");
+        var statusDropdown2 = document.getElementById("statusDropdown_2");
+        var firstBargeOption = bargeDropdown.getElementsByTagName("option")[0];
+        var firstStatusOption = statusDropdown.getElementsByTagName("option")[0];
+        var StatusOption2 = statusDropdown2.getElementsByTagName("option")[0];
+
+        $(document).ready(function () {
+            $('#recordno').hide();
+            $('#updateButton').hide();
+            checkTranactioninputSelection();
+            $('#bargeDropdown').on('input',
+                function () {
+                    const selectedBarge = $(this).val();
+                    var selectedStatus = $('#statusDropdown').val();
+                    if (selectedBarge !== '') {
+                        // Send an AJAX request to retrieve the details for the selected barge and status
+                        $.ajax({
+                            url: '/Maintenance/GetBargeDetails',
+                            type: 'GET',
+                            data: { barge: selectedBarge, status: selectedStatus },
+                            success: function (response) {
+                                // Update the fields with the retrieved data
+                                $('#rateInput').val(response.rate);
+                                $('#ownerInput').val(response.owner);
+                                $('#transactionInput').val(response.transaction);
+                                $('#recordInput').val(response.record);
+
+                                $('#bargeDropdown').prop('disabled', true);
+                                checkTranactioninputSelection();
+                                $('#previewButton').show();
+                                $('#deleteButton').show();
+                                $('#previewtoexportbutton').show();
+                            },
+                            error: function () {
+                                console.log('Error occurred while retrieving barge details.');
+                            }
+                        });
+                    } else {
+                        // Clear the fields if no barge is selected
+                        $('#rateInput').val('');
+                        $('#ownerInput').val('');
+                        $('#transactionInput').val('');
+                    }
+                });
+            var rowCount = 1;
+
+            $('#addRowButton').on('click',
+                function () {
+                    var newRow = $('#dynamicTable tbody tr:first').clone();
+                    newRow.find('input').val('');
+                    newRow.find('input').each(function () {
+                        var nameAttribute = $(this).attr('name');
+                        nameAttribute = nameAttribute.replace('[0]', '[' + rowCount + ']');
+                        $(this).attr('name', nameAttribute);
+                    });
+
+                    $('#dynamicTable tbody').append(newRow);
+
+                    rowCount++;
+                });
+            $('#addTransactionButton').on('click',
+                function () {
+                    // Clear all fields
+                    firstBargeOption.selected = true;
+                    StatusOption2.selected = true;
+                    $('#rateInput').val('');
+                    $('#ownerInput').val('');
+                    $('#transactionInput').val('');
+
+                    // Remove all rows except the first one
+                    $('#dynamicTable tbody tr:not(:first)').remove();
+
+                    // Clear input fields in the first row
+                    $('#dynamicTable tbody tr:first').find('input, select').val('');
+
+                    // Hide the partial view and buttons
+                    $('#transfersGrid, #previewButton, #deleteButton, #previewtoexportbutton, #updateButton, #savetransfer').hide();
+                    $('#recordno').show();
+
+                    // Show the Add New Transaction button
+                    $(this).show();
+
+                    $('#bargeDropdown').prop('disabled', false);
+                });
+
+            function checkTranactioninputSelection() {
+                var selectedValue = $('#transactionInput').val();
+
+                if (selectedValue !== '') {
+                    $('#savetransfer').show();
+                    $('#updateButton').show();
+                } else {
+                    $('#savetransfer').hide();
+                }
+            }
+
+            $('#transferForm').submit(function () {
+                // Update the name attribute of the status element in each row
+                $('#dynamicTable tbody tr').each(function (index) {
+                    var inputs = $(this).find('input, select');
+                    inputs.each(function () {
+                        var nameAttribute = $(this).attr('name');
+                        nameAttribute = nameAttribute.replace(/\[\d+\]/, '[' + index + ']');
+                        $(this).attr('name', nameAttribute);
+                    });
+                });
+
+            });
+
+            $('#deleteButton').click(function () {
+                // Get the input value
+                var inputValue = $('#transactionInput').val();
+                var barge = $('#bargeDropdown').val();
+
+                // Create an AJAX request
+                $.ajax({
+                    url: '/Maintenance/Delete_transaction',
+                    type: 'GET',
+                    data: { transactionInput: inputValue },
+                    success: function (response) {
+                        window.location.href = '/Home/IndexPage?BargeName=' + barge;
+                    },
+                    error: function () {
+                        console.log('Error occurred while retrieving barge details.');
+                    }
+                });
+            });
+            $('#updateButton').click(function () {
+                // Get the input value
+                var inputValue = $('#transactionInput').val();
+                var barge = $('#bargeDropdown').val();
+                var rate = $('#rateInput').val();
+                var status = $('#statusDropdown').val();
+                // Create an AJAX request
+                if(inputValue!=""){
+                    $.ajax({
+                        url: '/Maintenance/Update_transaction',
+                        type: 'POST',
+                        data: { transactionInput: inputValue, status: status, Rate: rate },
+                        success: function (response) {
+                            window.location.href = '/Home/IndexPage?Transactionno=' + inputValue;
+                        },
+                        error: function () {
+                            console.log('Error occurred while retrieving barge details.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

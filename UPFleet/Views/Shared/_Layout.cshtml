@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] UPfleet</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="~/css/custom.css" rel="stylesheet" />
+
+    @await RenderSectionAsync("CustomCSS", required: false)
+    
+    <style>
+        .header-wrapper {
+            height: 105px;
+            display: flex;
+            background: rgb(0 0 0 /50%);
+        }
+        .content-wrapper {
+            margin-bottom: 50px;
+        }
+        .footer {
+            position: fixed !important;
+            left: 0 !important;
+            white-space: nowrap !important;
+            line-height: 60px !important;
+            background-color: #c9cee8 !important;
+            text-align: center;
+            width: 100%;
+            color: #5f5f5f!important;
+            font-weight: 500;
+            position: relative;
+            bottom: 0px;
+            height: 50px;
+        }
+        .content-wrapper {
+            margin-bottom: 50px;
+            height: 60vh;
+        }
+        .main-content-area-wrapper.row {
+            justify-content: center;
+        }
+        .card-header-text {
+            background: #8c8bdd;
+            color: #ffffff;
+        }
+        .overlay {
+            background: url(image/v2.jpg);
+            background-position: center;
+            background-size: cover;
+        }
+        nav.navbar.navbar-expand-sm.navbar-toggleable-sm.navbar-light.bg-white.box-shadow.mb-3 {
+            background: none !important;
+        }
+        a.navbar-brand {
+            color: #ffffff!importaNT;
+            letter-spacing: 3px;
+            font-weight: 500;
+            font-size: 30px;
+        }
+        .btn-primary {
+            color: #fff;
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            width: 100%;
+        }
+        .col-md-2.sidebar {
+            padding-top: 40px;
+            background: #5e627b;
+        }
+        .navigation a {
+            color: #ffffff;
+        }
+        .form-group a {
+            margin: 5px;
+        }
+        .navigation a:hover {
+            color: #ffac13;
+        }
+        a.nav-link.active {
+            color: #ffac13;
+        }
+        table#dynamicTableTransfergrid td a {
+            color: #fff;
+            background: #ffa602;
+            PADDING: 5px 15px;
+            border-radius: 22px;
+            text-decoration: none;
+            font-weight: 400s
+        }
+        .btn-outline-warning:hover {
+            background: orange;
+            color: #fff;
+        }
+        table#dynamicTableTransfergrid td a:hover {
+            color: #ffa602;
+            background: #fff;
+            PADDING: 5px 15px;
+            border-radius: 22px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+   <div class="overlay">
+    <div class="container-fluid header-wrapper">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white box-shadow mb-3">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="HomePage">UPFleet</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            @*<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                            <ul class="navbar-nav flex-grow-1">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Transaction" asp-action="Index">Transaction</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Barges"  asp-action="Index" >Barges</a>
+                                </li>
+                            </ul>
+                        </div>*@
+        </nav>
+        </div>
+    </div>
+           
+       
+</header>
+    <div class="container-fluid content-wrapper">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - UPfleet -
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

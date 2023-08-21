@@ -1,0 +1,47 @@
+﻿@model List<Owner>
+@{
+    ViewData["Title"] = "Owner_reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10 border border-2">
+
+            <table class=" table table-striped">
+                <thead>
+                    <tr>
+                        <th>OwnerName</th>
+                        <th>Company</th>
+                        <th>Address1</th>
+                        <th>Address2</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Zip</th>
+                        <th>Account</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.OwnerName</td>
+                            <td>@item.Company</td>
+                            <td>@item.Address1</td>
+                            <td>@item.Address2</td>
+                            <td>@item.City</td>
+                            <td>@item.State</td>
+                            <td>@item.Zip</td>
+                            <td>@item.Account</td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+</div>

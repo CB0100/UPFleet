@@ -1,0 +1,44 @@
+﻿@model List<Barge>
+@{
+    ViewData["Title"] = "Barge_By_Owner";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10 border border-2">
+
+            <table class=" table table-striped">
+                <thead>
+                    <tr>
+                        <th>Barge_Name</th>
+                        <th>Size</th>
+                        <th>Rate</th>
+                        <th>Owner</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @{
+                        foreach (var item in Model)
+                            {
+                               <tr>
+                                <td>@item.Barge_Name</td>
+                                <td>@item.Size</td>
+                                <td>@item.Rate</td>
+                                <td>@item.Owner</td>
+                                <td>@item.Description</td>
+                               </tr>
+                            }
+
+                        }
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class="col-lg-1"></div>
+    </div>
+</div>
+

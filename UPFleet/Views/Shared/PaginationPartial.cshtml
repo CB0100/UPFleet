@@ -1,0 +1,62 @@
+﻿@model UPFleet.ViewModels.PaginationViewModel
+@{
+    Model.TotalPages -= 1;
+    const int k = 0;
+}
+<div class="pagination-container">
+    @if (Model.CurrentPage>0)
+    {
+        <button id="prevPage" class="page-arrow">Previous</button>
+    }
+    <ul class="pagination">
+        @if (Model.CurrentPage > 5)
+        {
+        <li class="page-item">
+            <a href="?page=@k" class="page-link page-number" >@(k+1)</a>
+        </li>
+        <span> .... </span>
+        }
+        @for (int i = Model.CurrentPage - 5; i <= Model.CurrentPage + 5; i++)
+        {
+
+            if (i >= 0 && i <= Model.TotalPages)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a href="?page=@i" class="page-link page-number">@(i+1)</a>
+                </li>
+            }
+        }
+        @if (Model.CurrentPage < Model.TotalPages-5)
+        {
+        <span> .... </span>
+        <li class="page-item">
+            <a href="?page=@Model.TotalPages" class="page-link page-number">@(Model.TotalPages+1)</a>
+        </li>
+        }
+    </ul>
+    @if (Model.CurrentPage < Model.TotalPages)
+    {
+        <button id="nextPage" class="page-arrow">Next</button>        
+    }
+</div>
+
+<script>
+    const prevPageButton = document.getElementById("prevPage");
+    const nextPageButton = document.getElementById("nextPage");
+    const pageNumbers = document.querySelectorAll(".page-number");
+    let currentPage = @(Model.CurrentPage);
+
+    if (currentPage > 0) {
+        prevPageButton.addEventListener("click",
+            function() {
+                window.location.href = "?page=" + (currentPage - 1);
+
+            });
+    }
+    nextPageButton.addEventListener("click",
+        function() {
+            if (currentPage < @(Model.TotalPages)) {
+            window.location.href = "?page=" + (currentPage + 1);
+        }
+    });
+</script>

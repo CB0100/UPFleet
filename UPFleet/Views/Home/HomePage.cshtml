@@ -1,0 +1,43 @@
+﻿@model List<Barge>
+
+
+<div class="main-content-area">
+    <div class="main-content-area-wrapper row">
+        <div class="col-lg-5 col-md-6 col-sm-10">
+            <div class="card main-content-card">
+                <div class="card-header text-capitalize bg-gradient card-header-text">
+                    <label>Barge Selection</label>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <h3>UPfleet Barge Selection</h3>
+                        <span>Select a barge from the list</span> @*or enter a new barge number.*@
+                    </div>
+                    <div class="form-group">
+                        <select id="bargeDropdown" class="form-control">
+                            @foreach (var barge in ViewBag.BargeList)
+                            {
+                                <option value="@barge.Barge_Name">@barge.Barge_Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="card-footer card-action-control">
+                    <button class="btn btn-primary" onclick="Okbutton()">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    <script src="jquery-3.6.4.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function Okbutton() {
+            var value = jQuery('select[id=bargeDropdown] option').filter(':selected').val();
+            window.location.href = "/Home/IndexPage?BargeName=" + value;
+        }
+    </script>
+}

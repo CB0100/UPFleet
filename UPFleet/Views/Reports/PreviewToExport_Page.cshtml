@@ -1,0 +1,87 @@
+﻿@model List<UPFleet.ViewModels.View_Model>
+
+<html>
+<head>
+</head>
+<body>
+    <button id="prntbtn" style="display:none">Print me</button>
+    <table class="table" id="printTable">
+        <thead>
+            <tr>
+                <th>Barge Nav</th>
+                <th>Owner</th>
+                <th>Total Cash</th>
+                <th>Transaction No</th>
+                <th>Barge Size</th>
+                <th>Rate</th>
+                <th>Total Days</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transferView in Model)
+            {
+                @if (transferView.TransferList.Any())
+                {
+                    <tr>
+                        <td>@transferView.Barge.Barge_Name</td>
+                        <td>@transferView.Barge.Owner</td>
+                        <td>$@((int)(transferView.Barge.Rate ?? 0) * transferView.TransferList.Sum(t => t.DaysIn))</td>
+                        <td>@transferView.Transaction.TransactionNo</td>
+                        <td>@transferView.Barge.Size</td>
+                        <td>$@transferView.Barge.Rate</td>
+                        <td>@transferView.TransferList.Sum(t => t.DaysIn)</td>
+                        <td>@transferView.Transaction.Status</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Cost</th>
+                                        <th colspan="3"></th>
+                                        <th>Days In</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var transfer in transferView.TransferList)
+                                    {
+                                        <tr>
+                                            <td>@transfer.From</td>
+                                            <td>@transfer.To</td>
+                                            <td>
+                                                $@(transfer.DaysIn * transferView.Barge.Rate)
+                                            </td>
+                                            <td colspan="3"></td>
+                                            <td>@transfer.DaysIn</td>
+                                            <td>@transfer.Status</td>
+                                        </tr>
+                                    }
+                                    <p>Summary for Transaction# @transferView.Transaction.TransactionNo (@(transferView.TransferList.Count()) details Record)</p>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</body>
+</html>
+@{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    //<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script>
+        const printButton = document.getElementById("prntbtn");
+        printButton.style.display = "block"; // Show the button for normal display
+        printButton.addEventListener("click", function () {
+            printButton.style.display = "none"; // Hide the button before printing
+            window.print();
+            printButton.style.display = "block";
+        });
+    </script>
+}

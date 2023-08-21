@@ -1,0 +1,147 @@
+﻿@using UPFleet.ViewModels
+@model List<UPFleet.ViewModels.View_Model>
+
+<html>
+<head>
+</head>
+<body>
+    <button id="prntbtn" style="display:none">Print me</button>
+    @{
+        int page = !string.IsNullOrEmpty(Context.Request.Query["page"]) ? int.Parse(Context.Request.Query["page"]) : 0;
+        int pageSize = 1; // Set your desired page size here
+    }
+    <div class="container" id="printTable">
+        @foreach (var item in Model.Skip(page * pageSize).Take(pageSize))
+        {
+            <div class="p-4">
+                <div>
+                    <div class="row">
+                        <div class="col-6">
+                            <h4>@item?.Owner?.Company</h4>
+                        </div>
+                        <div class="col-6">
+                            <h4>@item?.Owner?.OwnerName</h4>
+                        </div>
+                    </div>
+                    <h4>@item?.Owner?.Address1</h4><br />
+                    <h4>@item?.Owner?.Address2</h4><br />
+                    <h4>@item?.Owner?.City</h4><h4>@item?.Owner?.State</h4><h4>@item?.Owner?.Zip</h4>
+                </div>
+                <div>
+                    @foreach (var barge in item?.BargeList)
+                    {
+                        @foreach (var tranaction in item!.Transactionslist!.Where(m => m.Barge == barge.Barge_Name))
+                        {
+                            <div>
+                                <div class="col-md-12 row">
+                                    <div class="col-6 row">
+                                        <div class="col-4">
+                                            <h5>Barge:</h5>
+                                        </div>
+                                        <div class="col">
+                                            <h5>@tranaction.Barge</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 row">
+                                        <div class="col-4">
+                                            <h5>Rate:</h5>
+                                        </div>
+                                        <div class="col">
+                                            <h5>$@tranaction.Rate</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 row">
+                                    <div class="col-6 row">
+                                        <div class="col-4">
+                                            <h5>Status:</h5>
+                                        </div>
+                                        <div class="col">
+                                            <h5>@tranaction.Status</h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 row">
+                                        <div class="col-4">
+                                            <h5>Tranaction #:</h5>
+                                        </div>
+                                        <div class="col">
+                                            <h5>@tranaction.TransactionNo</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Cost</th>
+                                        <th>Transfer #</th>
+                                        <th>Status</th>
+                                        <th>Days In</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var transfer in item?.TransferList.Where(m => m.Transaction == tranaction.TransactionNo))
+                                    {
+                                        <tr>
+                                            <td>@transfer.From</td>
+                                            <td>@transfer.To</td>
+                                            <td>
+                                                $@(transfer.DaysIn * tranaction.Rate)
+                                            </td>
+                                            <td>@transfer.TransferNO</td>
+                                            <td>@transfer.Status</td>
+                                            <td>@transfer.DaysIn</td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <td colspan="6">
+                                            <p>Summary for Transaction# @tranaction.TransactionNo (@item!.TransferList!.Count(m => m.Transaction == tranaction.TransactionNo) details Record)</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">Sum</td>
+                                        <td colspan="2">$@((int)(tranaction.Rate ?? 0) * item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn))
+                                        <td />
+                                        <td colspan="2">@item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn)</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        }}
+                </div>
+            </div>
+        }
+    </div>
+    <div class="container navcontainer" style="display:none">
+        <nav aria-label="Page navigation">
+            @Html.Partial("PaginationPartial", new PaginationViewModel { TotalPages = (int)Math.Ceiling((double)Model.Count / pageSize), CurrentPage = page })
+        </nav>
+    </div>
+</body>
+</html>
+@{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const printButton = $("#prntbtn");
+            const paginationContainer = $(".navcontainer");
+
+            printButton.css("display", "block");
+            paginationContainer.css("display", "block"); // Show the pagination container
+
+            printButton.on("click", function () {
+                printButton.css("display", "none");
+                paginationContainer.css("display", "none"); // Hide the pagination container
+                window.print();
+                printButton.css("display", "block");
+                paginationContainer.css("display", "block"); // Show the pagination container again after printing
+            });
+        });
+
+
+    </script>
+}
