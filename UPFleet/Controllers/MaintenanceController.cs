@@ -244,8 +244,8 @@ namespace UPfleet.Controllers
             TempData["BargeName"] = barge;
             return Json(response);
         }
-        [HttpPost]
-        public ActionResult Update_transaction(double transactionInput,string status, double Rate)
+        [HttpGet]
+        public IActionResult Update_transaction(double transactionInput,string status, double Rate)
         {
             var transaction = _dbContext.Transactions.FirstOrDefault(m => m.TransactionNo == transactionInput);
             if (transaction != null)
@@ -259,30 +259,24 @@ namespace UPfleet.Controllers
         }
 
         //delete transfer
-
+        [HttpGet]
         public ActionResult Delete_transaction(double transactionInput)
         {
             var transaction =
                 _dbContext.Transactions.FirstOrDefault(t => Equals(t.TransactionNo, (double)(transactionInput)));
             var transfers = _dbContext.Transfers.Where(m => m.Transaction == transactionInput).ToList();
-
-            var bargename = TempData["BargeName"]?.ToString();
-            TempData.Keep("BargeName");
-            TempData.Keep("tranactionNo");
             if (transaction != null)
             {
                 foreach (var transfer in transfers)
                 {
-                    if (transfer != null)
-                    {
-                        _dbContext.Transfers.Remove(transfer);
-                    }
+                    _dbContext.Transfers.Remove(transfer);
                 }
                 _dbContext.Transactions.Remove(transaction);
                 _dbContext.SaveChanges();
-
             }
-            return RedirectToAction("IndexPage", "Home", new { BargeName = bargename });
+
+            var response = "Data saved Successfully.";
+            return Json(response);
 
         }
     }

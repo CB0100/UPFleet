@@ -1,12 +1,16 @@
 ﻿@model List<Transaction>
-
+@{
+    var tranactionNo = TempData["tranactionNo"]?.ToString();
+    TempData.Keep("BargeName");
+    TempData.Keep("tranactionNo");
+}
 <table id="dynamicTableTransfergrid" class="table table-striped">
     <thead>
         <tr>
             <th>Tranaction No.</th>
-            <th>Barge</th>
+            <th>Rate</th>
             <th>Status</th>
-            <th>Select</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -16,9 +20,18 @@
             {
                 <tr>
                     <td>@Model[i].TransactionNo</td>
-                    <td>@Model[i].Barge</td>
+                    <td>@Model[i].Rate</td>
                     <td>@Model[i].Status</td>
-                    <td><a href="@Url.Action("IndexPage", "Home", new { Transactionno = (Model[i].TransactionNo) })">Select</a></td>
+                    <td>
+                        @if (Model[i].TransactionNo == Convert.ToDouble(tranactionNo))
+                        {
+                            <a style="background-color: green; cursor: pointer;" disabled>Selected</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("IndexPage", "Home", new { Transactionno = Model[i].TransactionNo })">Select</a>
+                        }
+                    </td>
                 </tr>
             }
         }

@@ -22,57 +22,55 @@ namespace UPfleet.Controllers
         }
         public IActionResult IndexPage(string? BargeName = null, double? Transactionno = null)
         {
-            List<Barge> BargeList = new List<Barge>(_dbContext.Barges.ToList().OrderBy(m => m.Barge_Name));
-            BargeList.Insert(0, new Barge { Barge_Name = "Select Barge" });
-            ViewBag.Bargelist = BargeList;
+            var bargeList = _dbContext.Barges.OrderBy(m => m.Barge_Name).ToList();
+            bargeList.Insert(0, new Barge { Barge_Name = "Select Barge" });
+            ViewBag.Bargelist = bargeList;
+
+                var data = _dbContext.Transactions
+                    .Where(m => m.Barge == BargeName && _dbContext.Transfers.Any(tr => tr.Transaction == m.TransactionNo &&
+                        (tr.From != null || tr.To != null)))
+                    .OrderBy(m => m.TransactionNo)
+                    .ToList();
             if (BargeName != null)
             {
-                View_Model viewmodelobj = new()
+
+                var selectedData = data.FirstOrDefault();
+                var viewModel = new View_Model
                 {
-                    Transactionslist = _dbContext.Transactions.Where(m => m.Barge == BargeName).ToList(),
-                    Barge = _dbContext.Barges?.Where(m => m.Barge_Name == BargeName).FirstOrDefault()
+                    TransferList = _dbContext.Transfers.Where(m => m.Transaction == selectedData.TransactionNo).ToList(),
+                    Transaction = selectedData,
+                    Transactionslist = data,
+                    Barge = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == BargeName)
                 };
 
-                for (int i = viewmodelobj.Transactionslist.Count - 1; i >= 0; i--)
-                {
-                    var datalist = _dbContext.Transfers
-                        .Where(m => m.Transaction != null && m.Transaction == viewmodelobj.Transactionslist[i].TransactionNo).ToList();
-                    if (datalist.Count == 0)
-                    {
-                        viewmodelobj.Transactionslist.RemoveAt(i);
-                    }
-                }
-
                 TempData["BargeName"] = BargeName;
-                return View(viewmodelobj);
+                TempData["tranactionNo"] = selectedData.TransactionNo.ToString();
+                return View(viewModel);
             }
             else if (Transactionno != null)
             {
-                string bargename = TempData["BargeName"].ToString();
+                var bargename = TempData["BargeName"]?.ToString();
                 TempData["tranactionNo"] = Transactionno.ToString();
                 TempData.Keep("BargeName");
                 TempData.Keep("tranactionNo");
-                View_Model viewmodelobj = new View_Model()
+
+                var viewModel = new View_Model
                 {
                     TransferList = _dbContext.Transfers.Where(m => m.Transaction == Transactionno).ToList(),
                     Transaction = _dbContext.Transactions.FirstOrDefault(m => m.TransactionNo == Transactionno),
-                    Transactionslist = _dbContext.Transactions.Where(m => m.Barge == bargename).ToList(),
-                    Barge = _dbContext.Barges?.Where(m => m.Barge_Name == bargename).FirstOrDefault()
+                    Transactionslist = _dbContext.Transactions
+                        .Where(m => m.Barge == bargename && _dbContext.Transfers.Any(tr => tr.Transaction == m.TransactionNo &&
+                            (tr.From != null || tr.To != null)))
+                        .OrderBy(m => m.TransactionNo)
+                        .ToList(),
+                    Barge = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == bargename)
                 };
-                for (int i = viewmodelobj.Transactionslist.Count - 1; i >= 0; i--)
-                {
-                    var datalist = _dbContext.Transfers
-                        .Where(m => m.Transaction == viewmodelobj.Transactionslist[i].TransactionNo).ToList();
-                    if (datalist.Count == 0)
-                    {
-                        viewmodelobj.Transactionslist.RemoveAt(i);
-                    }
-                }
 
-                return View(viewmodelobj);
+                return View(viewModel);
             }
 
             return View();
         }
+
     }
 }
