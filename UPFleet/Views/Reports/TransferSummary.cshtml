@@ -4,7 +4,10 @@
 <head>
 </head>
 <body>
-    <button id="prntbtn" style="display:none">Print me</button>
+    <div class="function-btn">
+        <button id="backbtn">Back</button>
+        <a id="prntbtn" style="display: none"><img src="../image/printing.png"></a>
+    </div>
     <table class="table" id="printTable">
         <thead>
             <tr>
@@ -34,16 +37,16 @@
                         <td>@transferView.Transaction.Status</td>
                     </tr>
                     <tr>
-                        <td colspan="6">
+                        <td colspan="8">
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Cost</th>
+                                        <th style="width: 215px;">From</th>
+                                        <th style="width: 270px;">To</th>
+                                        <th style="width: 160px;">Cost</th>
                                         <th colspan="3"></th>
-                                        <th>Days In</th>
-                                        <th>Status</th>
+                                        <th style="width: 155px">Days In</th>
+                                        <th style="width: 130px;">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>

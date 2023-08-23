@@ -9,7 +9,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h1 class="text-center text-primary" style="text-decoration:underline">Add Barges</h1>
+                    <h3 class="text-center text-primary">Update Barges</h3>
                 </div>
                 <form method="post" asp-action="BargeUpdate" asp-controller="Maintenance" id="formid">
                     <input type="hidden" asp-for="ID" />
@@ -39,8 +39,8 @@
                             <input type="text" class="form-control" asp-for="Description" id="description" />
                             <span asp-validation-for="Description" id="erdescription" class="text-danger"></span>
                         </div>
-                        <div class="form-group" style="display:flex;">
-                           <div class="m-3">
+                        <div class="form-group"style="display: flex;align-items: center;justify-content: space-between;">
+                            <div class="m-1">
                                 <a href="@Url.Action("BargeUpdate", "Maintenance", new { id = ((Model.ID)-1) })"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
                                 <label>@Model.ID</label>/<label>@TempData["MaxID"]</label>
                                 <a href="@Url.Action("BargeUpdate", "Maintenance", new { id = ((Model.ID)+1) })"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>

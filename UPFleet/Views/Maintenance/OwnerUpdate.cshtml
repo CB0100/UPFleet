@@ -9,7 +9,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h1 class="text-center text-primary" style="text-decoration:underline">Add/Edit Owners.</h1>
+                    <h3 class="text-center text-primary">Update Owners</h3>
                 </div>
                 <form method="post" asp-action="OwnerUpdate" asp-controller="Maintenance" id="formid">
                     <input type="hidden" asp-for="ID" />
@@ -29,14 +29,14 @@
                             <input type="text" asp-for="Account" class="form-control" id="account" />
                             <span asp-validation-for="Company" id="eraccount" class="text-danger"></span>
                         </div>
-                        <div class="form-group" style="display:flex;">
-                            <div class="m-3">
+                        <div class="form-group" style="display: flex;align-items: center;justify-content: space-between;">
+                            <div class="m-1">
                                 <a href="@Url.Action("OwnerUpdate", "Maintenance", new { id = ((Model.ID)-1) })"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
                                 <label>@Model.ID</label>/<label>@TempData["data"]</label>
                                 <a href="@Url.Action("OwnerUpdate", "Maintenance", new { id = ((Model.ID)+1) })"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
                             </div>
-                            <input type="submit" class="btn btn-primary m-3" value="Submit" id="btnid" />
-                            <a href="@Url.Action("HomePage", "Home")" class="btn btn-danger m-3">Back</a>
+                            <input type="submit" class="btn btn-primary m-1" value="Submit" id="btnid" />
+                            <a href="@Url.Action("HomePage", "Home")" class="btn btn-danger m-1 float-sm-end">Back</a>
 
                         </div>
                     </div>
