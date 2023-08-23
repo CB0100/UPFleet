@@ -1,62 +1,109 @@
 ﻿$(document).ready(function () {
-    var $ownerName = $('#owner_name');
-    var $company = $('#company');
-    var $account = $('#account');
+    var owner_name, company, account;
 
-    var $errorOwnerName = $('#erowner_name');
-    var $errorCompany = $('#ercompany');
-    var $errorAccount = $('#eraccount');
+    $('#formid').on('change', function () {
+        GetValidation();
+    });
 
-    $('#formid').on('input', GetValidation);
 
+    $("#owner_name").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '/Maintenance/AutocompleteOwner',
+                type: 'GET',
+                data: { term: request.term },
+                success: function (data) {
+                    response(data);
+                }
+            });
+        },
+        select: function (event, ui) {
+            // Handle the selected autocomplete suggestion
+            var selectedValue = ui.item.value;
+
+            // Send the selected value to the MVC action using AJAX
+            $.ajax({
+                url: '/Maintenance/GetDetails',
+                type: 'GET',
+                data: { owner: selectedValue },
+                success: function (response) {
+                    if (response.ownerid != 0) {
+                        window.location.href = '/Maintenance/OwnerUpdate/' + response.ownerid;
+                    }
+                },
+                error: function (error) {
+                    console.error("Error sending data: " + error);
+                }
+            });
+        }
+    });
     $('#btnid').click(function () {
         if (!GetValidation()) {
             return false;
         }
     });
 
-    $ownerName.on('input', function () {
-        ValidateInput($ownerName, $errorOwnerName, BlockSpecialCharacter);
-    });
+    function GetValidation() {
+        owner_name = $('#owner_name').val();
+        company = $('#company').val();
+        account = $('#account').val();
 
-    $company.on('input', function () {
-        ValidateInput($company, $errorCompany, BlockSpecialCharacter);
-    });
-
-    $account.on('input', function () {
-        ValidateInput($account, $errorAccount, BlockSpecialNumber);
-    });
-});
-
-function ValidateInput($input, $error, validationFunction) {
-    var value = $input.val();
-
-    if (value === "") {
-        $error.text('Please enter a value');
-        $input.addClass('invalid');
-        return false;
-    } else if (value.length < 3) {
-        $error.text('Must be at least 3 characters');
-        $input.addClass('invalid');
-        return false;
-    } else if (validationFunction && !validationFunction(value)) {
-        $error.text('Special characters not allowed');
-        $input.val('');
-        $input.addClass('invalid');
-        return false;
-    } else {
-        $error.text('');
-        $input.removeClass('invalid');
-        return true;
+        return validateField(owner_name, $('#erowner_name'), 'owner_name', 3) &&
+            validateField(company, $('#ercompany'), 'company', 3) &&
+            validateField(account, $('#eraccount'), 'account', 1, true);
     }
-}
 
-function BlockSpecialCharacter(value) {
-    var regex = /^[a-zA-Z0-9]*$/;
-    return regex.test(value);
-}
+    function validateField(value, errorElement, fieldName, minLength, isNumberField = false) {
+        if (value === "") {
+            errorElement.text('please enter ' + fieldName);
+            $('#' + fieldName).css('border-color', 'red').focus();
+            return false;
+        } else if (value.length < minLength) {
+            errorElement.text(fieldName + ' must be greater than or equal to ' + minLength + ' characters');
+            return false;
+        } else {
+            errorElement.text('');
+            $('#' + fieldName).css('border-color', 'lightgray');
+            return true;
+        }
+    }
 
-function BlockSpecialNumber(value) {
-    var regex = /^[0-9]*$/;
-    return regex.test(value);
-}
+    $('#owner_name, #company').keypress(function (e) {
+        var result = BlockSpecialCharacter(e);
+        if (!result) {
+            e.preventDefault();
+        } else {
+            hideError($(this));
+        }
+    });
+
+    $('#account').keypress(function (e) {
+        var result = BlockSpecialNumber(e);
+        if (!result) {
+            e.preventDefault();
+        } else {
+            hideError($(this));
+        }
+    });
+
+    function showError(inputElement, errorMessage) {
+        var errorElement = $('#er' + inputElement.attr('id'));
+        errorElement.text(errorMessage);
+    }
+
+    function hideError(inputElement) {
+        $('#er' + inputElement.attr('id')).text('');
+    }
+
+    function BlockSpecialCharacter(e) {
+        var keyCharCode = e.key.charCodeAt(0);
+        return (keyCharCode >= 48 && keyCharCode <= 57) || // 0-9
+            (keyCharCode >= 65 && keyCharCode <= 90) || // A-Z
+            (keyCharCode >= 97 && keyCharCode <= 122); // a-z
+    }
+
+    function BlockSpecialNumber(e) {
+        var keyCharCode = e.key.charCodeAt(0);
+        return keyCharCode >= 48 && keyCharCode <= 57; // 0-9
+    }
+});

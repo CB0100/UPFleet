@@ -11,7 +11,38 @@
     $('#formid input').on('change', function () {
         getValidation();
     });
+    
+    $("#Barge_Name").autocomplete({
+        source: function (request, response) {            
+            $.ajax({
+                url: '/Maintenance/AutocompleteBarge', 
+                type: 'GET',                    
+                data: { term: request.term },    
+                success: function (data) {
+                    response(data);
+                }
+            });
+        },
+        select: function (event, ui) {
+            // Handle the selected autocomplete suggestion
+            var selectedValue = ui.item.value;
 
+            // Send the selected value to the MVC action using AJAX
+            $.ajax({
+                url: '/Maintenance/GetDetails',
+                type: 'GET',
+                data: { barge: selectedValue },
+                success: function (response) {
+                    if (response.bargeid != 0) {
+                        window.location.href = '/Maintenance/BargeUpdate/' + response.bargeid;
+                    }
+                },
+                error: function (error) {
+                    console.error("Error sending data: " + error);
+                }
+            });      
+        }
+    });
     $('#owner').on('change', function () {
         getValidation();
     });
@@ -23,6 +54,8 @@
     $('#rate').keypress(function (e) {
         blockSpecialNumber(e);
     });
+
+    $("#rate").val(parseFloat($("#rate").val()).toFixed(2));
 });
 
 function getValidation() {
