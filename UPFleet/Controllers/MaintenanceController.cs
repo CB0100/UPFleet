@@ -64,7 +64,22 @@ namespace UPfleet.Controllers
             return RedirectToAction("OwnerUpdate", new { Id = model.ID });
         }
 
+        public ActionResult AutocompleteBarge(string term)
+        {
+            List<string> suggestions = new List<string>();
 
+                suggestions = _dbContext.Barges.Where(b => b.Barge_Name.Contains(term)).Select(b => b.Barge_Name).ToList();
+
+            return Json(suggestions);
+        }
+        public ActionResult AutocompleteOwner(string term)
+        {
+            List<string> suggestions = new List<string>();
+
+                suggestions = _dbContext.Owners.Where(b => b.OwnerName.Contains(term)).Select(b => b.OwnerName).ToList();
+
+            return Json(suggestions);
+        }
         public IActionResult BargeUpdate(int Id)
         {
             var minid = _dbContext.Barges.Min(m => m.ID);
@@ -126,14 +141,10 @@ namespace UPfleet.Controllers
         {
             return View();
         }
-
-
-
         [HttpPost]
         public IActionResult SaveTransfers(List<View_Model> transferlist)
         {
-            var bargename = TempData["BargeName"]?.ToString();
-            var transaction = TempData["Transaction"]?.ToString();
+            var transaction = TempData["tranactionNo"]?.ToString();
             TempData.Keep("BargeName");
             TempData.Keep("tranactionNo");
             foreach (var transfer in transferlist)
@@ -172,7 +183,8 @@ namespace UPfleet.Controllers
                             DateTime toDateTime = transfer.Transfer.To.Value;
                             if (DateTime.TryParse(transfer.Transfer.FromIns, out var fromInsDateTime))
                             {
-                                data.InsuranceDays = (transfer.Transfer.To.Value - fromInsDateTime).TotalDays.ToString(CultureInfo.CurrentCulture);
+                                int insuranceDays = (int)(toDateTime - fromInsDateTime).TotalDays;
+                                data.InsuranceDays = insuranceDays.ToString();
                             }
                         }
                         _dbContext.Transfers.Add(data);
@@ -201,7 +213,8 @@ namespace UPfleet.Controllers
                                 DateTime toDateTime = data.To.Value;
                                 if (DateTime.TryParse(data.FromIns, out var fromInsDateTime))
                                 {
-                                    data.InsuranceDays = (data.To.Value - fromInsDateTime).TotalDays.ToString();
+                                    int insuranceDays = (int)(toDateTime - fromInsDateTime).TotalDays;
+                                    data.InsuranceDays = insuranceDays.ToString();
                                 }
                             }
                             _dbContext.SaveChanges();
@@ -210,7 +223,7 @@ namespace UPfleet.Controllers
                 }
             }
 
-            return RedirectToAction("IndexPage", "Home", new { BargeName = bargename, Transactionno = transaction });
+            return RedirectToAction("IndexPage", "Home", new { Transactionno = transaction });
         }
         [HttpGet]
         public IActionResult GetBargeDetails(string barge, string status)
@@ -223,28 +236,64 @@ namespace UPfleet.Controllers
             }
 
             var count = _dbContext.Transactions.Count(m => m.Barge == barge&&_dbContext.Transfers.Any(tr=>tr.Transaction==m.TransactionNo));
+            var TransId = _dbContext.Transactions.Max(m => m.TransactionNo) + 1;
             var response = new
             {
                 Rate = bargeDetails.Rate,
                 Owner = bargeDetails.Owner,
-                Transaction = (_dbContext.Transactions.Max(m => m.TransactionNo) + 1),
+                Transaction = TransId,
                 record = count + 1
             };
 
             // Save Transaction
             Transaction data = new Transaction()
             {
-                TransactionNo = _dbContext.Transactions.Max(m => m.TransactionNo) + 1,
+                TransactionNo = TransId,
                 Rate = (double?)response.Rate,
                 Barge = barge,
                 Status = status
             };
             _dbContext.Transactions.Add(data);
             _dbContext.SaveChanges();
+            TempData["tranactionNo"] =TransId.ToString() ;
             TempData["BargeName"] = barge;
             return Json(response);
         }
+
+
         [HttpGet]
+        public IActionResult GetDetails(string barge = null, string owner = null)
+        {
+           
+           if(barge != null)
+            {
+                var bargeDetails = _dbContext.Barges.FirstOrDefault(b => b.Barge_Name == barge);
+                if (bargeDetails != null)
+                {
+                    var response = new
+                    {
+                        bargeid = bargeDetails.ID
+                    };
+                    return Json(response);
+                }
+            }
+            else if (owner!=null)
+            {
+                var ownerdetails = _dbContext.Owners.FirstOrDefault(b => b.OwnerName == owner);
+                if (ownerdetails != null)
+                {
+                    var response = new
+                    {
+                        ownerid = ownerdetails.ID
+                    };
+                    return Json(response);
+                }
+            }
+           return Json(null);
+        }
+
+
+            [HttpGet]
         public IActionResult Update_transaction(double transactionInput,string status, double Rate)
         {
             var transaction = _dbContext.Transactions.FirstOrDefault(m => m.TransactionNo == transactionInput);
@@ -254,8 +303,22 @@ namespace UPfleet.Controllers
                 transaction.Rate = Rate;
                 _dbContext.SaveChanges();
             }
-
-            return RedirectToAction("IndexPage", "Home", new {  Transactionno = transactionInput });
+            if (_dbContext.Transfers.Any(m => m.Transaction == transactionInput))
+            {
+                var response = new
+                {
+                    currentTransactionType = "Update"
+                };
+                return Json(response);
+            }
+            else
+            {
+                var response = new
+                {
+                    currentTransactionType = "New"
+                };
+                return Json(response);
+            }
         }
 
         //delete transfer
