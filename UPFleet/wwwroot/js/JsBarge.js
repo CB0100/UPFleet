@@ -113,7 +113,21 @@ function blockSpecialNumber(e) {
     var key = e.key;
     var regex = /[0-9.]/;
 
+    var currentValue = e.target.value;
+    var decimalIndex = currentValue.indexOf('.');
+
+    // Allow only digits and a single decimal point
     if (!regex.test(key)) {
+        e.preventDefault();
+    }
+
+    // Allow only one decimal point
+    if (key === '.' && decimalIndex !== -1) {
+        e.preventDefault();
+    }
+
+    // Allow only two digits after the decimal point
+    if (decimalIndex !== -1 && currentValue.substring(decimalIndex + 1).length >= 2) {
         e.preventDefault();
     }
 }

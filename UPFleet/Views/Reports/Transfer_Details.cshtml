@@ -7,8 +7,8 @@
 </head>
 <body>
 <div class="function-btn">
-    <button id="backbtn">Back</button>
-    <a id="prntbtn" style="display: none"><img src="../image/printing.png"></a>
+     <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
+    <a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>
 </div>
 <table class="border border-1 table table-striped table-responsive">
     <tr>
@@ -70,3 +70,16 @@
 </table>
 </body>
 </html>
+@{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const printButton = document.getElementById("function-btn");
+        printButton.style.display = "block"; // Show the button for normal display
+        printButton.addEventListener("click", function () {
+            printButton.style.display = "none"; // Hide the button before printing
+            window.print();
+            printButton.style.display = "block";
+        });
+    </script>
+}

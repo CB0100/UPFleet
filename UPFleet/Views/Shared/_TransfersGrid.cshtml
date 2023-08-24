@@ -7,7 +7,7 @@
 <table id="dynamicTableTransfergrid" class="table table-striped">
     <thead>
         <tr style="text-align:left;"s>
-        <th>Tranaction No.</th>
+        <th>Tranaction #</th>
         <th>Rate</th>
         <th>Status</th>
         <th style="text-align: center">Action</th>
@@ -20,7 +20,7 @@
         {
             <tr>
                 <td>@Model[i].TransactionNo</td>
-                <td>@Model[i].Rate</td>
+                    <td>$@($"{Model[i].Rate:0.00}")</td>
                 <td>@Model[i].Status</td>
                 <td>
                     @if (Model[i].TransactionNo == Convert.ToDouble(tranactionNo))

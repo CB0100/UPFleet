@@ -70,7 +70,7 @@
                             </div>
                             <div class="col-sm-2">
                                 <div class="form-group">
-                                    <label>Rate</label>
+                                    <label>Rate $</label>
                                     <input id="rateInput" type="text" class="form-control" value="@Model?.Transaction?.Rate">
                                 </div>
                             </div>
@@ -82,7 +82,7 @@
                             </div>
                             <div class="col-sm-2">
                                 <div class="form-group">
-                                    <label>Transaction</label>
+                                    <label>Transaction #</label>
                                     @{
                                         string transactionNo = Model?.Transaction?.TransactionNo.ToString() ?? "";
                                     }
@@ -114,8 +114,8 @@
                                     <table id="dynamicTable" class="table table-striped">
                                         <thead>
                                         <tr>
-                                            <th class="w-10">From Date Time</th>
-                                            <th class="w-10">To Date Time</th>
+                                            <th class="w-10">From Date</th>
+                                            <th class="w-10">To Date</th>
                                             <th>Status</th>
                                             <th class="text-nowrap">Fleet Days</th>
                                             <th class="w-10 text-nowrap">Insurance From Date</th>
@@ -268,159 +268,5 @@
 </div>
 
 @section Scripts{
-    <script>
-        var bargeDropdown = document.getElementById("bargeDropdown");
-        var statusDropdown = document.getElementById("statusDropdown");
-        var statusDropdown2 = document.getElementById("statusDropdown_2");
-        var firstBargeOption = bargeDropdown.getElementsByTagName("option")[0];
-        var firstStatusOption = statusDropdown.getElementsByTagName("option")[0];
-        var StatusOption2 = statusDropdown2.getElementsByTagName("option")[0];
-
-        $(document).ready(function () {
-            
-            $('#bargeDropdown').prop('disabled', true);
-            $('#updateButton').hide();
-            checkTranactioninputSelection();
-            $('#bargeDropdown').on('input',
-                function () {
-                    const selectedBarge = $(this).val();
-                    var selectedStatus = $('#statusDropdown').val();
-                    if (selectedBarge !== '') {
-                        // Send an AJAX request to retrieve the details for the selected barge and status
-                        $.ajax({
-                            url: '/Maintenance/GetBargeDetails',
-                            type: 'GET',
-                            data: { barge: selectedBarge, status: selectedStatus },
-                            success: function (response) {
-                                // Update the fields with the retrieved data
-                                $('#rateInput').val(response.rate);
-                                $('#ownerInput').val(response.owner);
-                                $('#transactionInput').val(response.transaction);
-
-                                $('#bargeDropdown').prop('disabled', true);
-                                checkTranactioninputSelection();
-                                $('#previewButton').show();
-                                $('#deleteButton').show();
-                                $('#previewtoexportbutton').show();
-                            },
-                            error: function () {
-                                console.log('Error occurred while retrieving barge details.');
-                            }
-                        });
-                    } else {
-                        // Clear the fields if no barge is selected
-                        $('#rateInput').val('');
-                        $('#ownerInput').val('');
-                        $('#transactionInput').val('');
-                    }
-                });
-            var rowCount = 1;
-
-            $('#addRowButton').on('click',
-                function () {
-                    var newRow = $('#dynamicTable tbody tr:first').clone();
-                    newRow.find('input').val('');
-                    newRow.find('input').each(function () {
-                        var nameAttribute = $(this).attr('name');
-                        nameAttribute = nameAttribute.replace('[0]', '[' + rowCount + ']');
-                        $(this).attr('name', nameAttribute);
-                    });
-
-                    $('#dynamicTable tbody').append(newRow);
-
-                    rowCount++;
-                });
-            $('#addTransactionButton').on('click',
-                function () {
-                    // Clear all fields
-                    firstBargeOption.selected = true;
-                    firstStatusOption.selected = true;
-                    $('#rateInput').val('');
-                    $('#ownerInput').val('');
-                    $('#transactionInput').val('');
-
-                    // Remove all rows except the first one
-                    $('#dynamicTable tbody tr:not(:first)').remove();
-
-                    // Clear input fields in the first row
-                    $('#dynamicTable tbody tr:first').find('input, select').val('');
-
-                    
-                    StatusOption2.selected = true;
-                    // Hide the partial view and buttons
-                    $('#transfersGrid, #previewButton, #deleteButton, #previewtoexportbutton, #updateButton, #savetransfer').hide();
-
-                    // Show the Add New Transaction button
-                    $(this).show();
-
-                    $('#bargeDropdown').prop('disabled', false);
-                });
-
-            function checkTranactioninputSelection() {
-                var selectedValue = $('#transactionInput').val();
-
-                if (selectedValue !== '') {
-                    $('#savetransfer').show();
-                    $('#updateButton').show();
-                } else {
-                    $('#savetransfer').hide();
-                }
-            }
-
-            $('#transferForm').submit(function () {
-                // Update the name attribute of the status element in each row
-                $('#dynamicTable tbody tr').each(function (index) {
-                    var inputs = $(this).find('input, select');
-                    inputs.each(function () {
-                        var nameAttribute = $(this).attr('name');
-                        nameAttribute = nameAttribute.replace(/\[\d+\]/, '[' + index + ']');
-                        $(this).attr('name', nameAttribute);
-                    });
-                });
-
-            });
-
-            $('#deleteButton').click(function () {
-                // Get the input value
-                var inputValue = $('#transactionInput').val();
-                var barge = $('#bargeDropdown').val();
-
-                // Create an AJAX request
-                $.ajax({
-                    url: '/Maintenance/Delete_transaction',
-                    type: 'GET',
-                    data: { transactionInput: inputValue },
-                    success: function (response) {
-                        alert('Data Deleted Successfully');
-                        window.location.href = '/Home/IndexPage?BargeName=' + barge;
-                    },
-                    error: function () {
-                        console.log('Error occurred while retrieving barge details.');
-                    }
-                });
-            });
-            $('#updateButton').click(function () {
-                // Get the input value
-                var inputValue = $('#transactionInput').val();
-                var barge = $('#bargeDropdown').val();
-                var rate = $('#rateInput').val();
-                var status = $('#statusDropdown').val();
-                // Create an AJAX request
-                if(inputValue !== ""){
-                    $.ajax({
-                        url: '/Maintenance/Update_transaction',
-                        type: 'GET',
-                        data: { transactionInput: inputValue, status: status, Rate: rate },
-                        success: function (response) {
-                            alert('Data Saved Successsfully.');
-
-                        },
-                        error: function () {
-                            console.log('Error occurred while retrieving barge details.');
-                        }
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="~/js/jsindexpage.js"></script>
 }

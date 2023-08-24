@@ -1,7 +1,11 @@
 ﻿@model List<PeachtreeExportedArchive>
 
 <h1>Peachtree Exported Archives</h1>
-
+<div class="container-fluid">
+    <div class="function-btn">
+        <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
+        <a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>
+    </div>
 <table class="table table striped border border-2">
     <thead>
         <tr>
@@ -49,3 +53,17 @@
         }
     </tbody>
 </table>
+</div>
+@{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const printButton = document.getElementById("function-btn");
+        printButton.style.display = "block"; // Show the button for normal display
+        printButton.addEventListener("click", function () {
+            printButton.style.display = "none"; // Hide the button before printing
+            window.print();
+            printButton.style.display = "block";
+        });
+    </script>
+}

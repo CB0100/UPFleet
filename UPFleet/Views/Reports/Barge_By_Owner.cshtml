@@ -5,7 +5,7 @@
 }
 <div class="container-fluid">
     <div class="function-btn" style="margin-left: 100px;margin-bottom: 20px">
-        <button id="backbtn">Back</button>
+         <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
         <a id="prntbtn" style="display: block"><img src="../image/printing.png"></a>
     </div>
     <div class="row" style="justify-content: center">
@@ -45,3 +45,16 @@
     </div>
 </div>
 
+@{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const printButton = document.getElementById("function-btn");
+        printButton.style.display = "block"; // Show the button for normal display
+        printButton.addEventListener("click", function () {
+            printButton.style.display = "none"; // Hide the button before printing
+            window.print();
+            printButton.style.display = "block";
+        });
+    </script>
+}

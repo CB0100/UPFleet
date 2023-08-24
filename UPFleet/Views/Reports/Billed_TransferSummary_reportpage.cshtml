@@ -12,8 +12,8 @@
     }
 <div class="container" id="printTable">
     <div class="function-btn">
-        <button id="backbtn">Back</button>
-        <a id="prntbtn" style="display: none"><img src="../image/printing.png"></a>
+            <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
+        <a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>
     </div>
     @foreach (var item in Model.Skip(page * pageSize).Take(pageSize))
     {
@@ -112,7 +112,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
-            const printButton = $("#prntbtn");
+            const printButton = $("#function-btn");
             const paginationContainer = $(".navcontainer");
 
             printButton.css("display", "block");

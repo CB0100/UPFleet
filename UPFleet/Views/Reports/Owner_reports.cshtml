@@ -3,45 +3,63 @@
     ViewData["Title"] = "Owner_reports";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-1"></div>
-        <div class="col-lg-10 border border-2 table-responsive">
+<div class="container" style="padding: 0px">
+    
+    <div class="function-btn" style="margin-bottom: 15px; margin-left: -10px;">
+        <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
+        <a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>
+    </div>
+    <div class="row" style="justify-content: center">
+        
+        <div class="col-lg-12 border border-2 table-responsive">
 
             <table class=" table table-striped">
                 <thead>
-                    <tr>
-                        <th>OwnerName</th>
-                        <th>Company</th>
-                        <th>Address1</th>
-                        <th>Address2</th>
-                        <th>City</th>
-                        <th>State</th>
-                        <th>Zip</th>
-                        <th>Account</th>
+                <tr>
+                    <th>OwnerName</th>
+                    <th>Company</th>
+                    <th>Address1</th>
+                    <th>Address2</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Zip</th>
+                    <th>Account</th>
 
-                    </tr>
+                </tr>
                 </thead>
                 <tbody>
 
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.OwnerName</td>
-                            <td>@item.Company</td>
-                            <td>@item.Address1</td>
-                            <td>@item.Address2</td>
-                            <td>@item.City</td>
-                            <td>@item.State</td>
-                            <td>@item.Zip</td>
-                            <td>@item.Account</td>
-                        </tr>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.OwnerName</td>
+                        <td>@item.Company</td>
+                        <td>@item.Address1</td>
+                        <td>@item.Address2</td>
+                        <td>@item.City</td>
+                        <td>@item.State</td>
+                        <td>@item.Zip</td>
+                        <td>@item.Account</td>
+                    </tr>
 
-                    }
+                }
                 </tbody>
             </table>
 
         </div>
-        <div class="col-lg-1"></div>
+       
     </div>
 </div>
+@{
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const printButton = document.getElementById("function-btn");
+        printButton.style.display = "block"; // Show the button for normal display
+        printButton.addEventListener("click", function () {
+            printButton.style.display = "none"; // Hide the button before printing
+            window.print();
+            printButton.style.display = "block";
+        });
+    </script>
+}
