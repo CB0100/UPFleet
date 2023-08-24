@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UPfleet.Data;
+using UPFleet.Data;
 using UPFleet.ViewModels;
 
-namespace UPfleet.Controllers
+namespace UPFleet.Controllers
 {
     public class ReportsController : Controller
     {
@@ -65,7 +65,7 @@ namespace UPfleet.Controllers
             var viewmodelobj = (from tr in transactionslist
                                 join b in bargeslist on tr.Barge equals b.Barge_Name
                                 where tr is not null
-                                select new View_Model()
+                                select new UPFleetViewModel()
                                 {
                                     Barge = b,
                                     Transaction = tr,
@@ -84,7 +84,7 @@ namespace UPfleet.Controllers
             var viewmodelobj = (
                 from tr in transactionslist
                 join b in bargeslist on tr.Barge equals b.Barge_Name
-                select new View_Model()
+                select new UPFleetViewModel()
                 {
                     Barge = b,
                     Transaction = tr,
@@ -117,7 +117,7 @@ namespace UPfleet.Controllers
                 join b in bargeslist on o.OwnerName equals b.Owner into ownerBarges
                 where o != null && ownerBarges.Any() && ownerBarges.Any(b => transactionslist.Any(t => t.Barge == b.Barge_Name))
                 orderby o.OwnerName
-                select new View_Model
+                select new UPFleetViewModel
                 {
                     Owner = o,
                     BargeList = ownerBarges.ToList(),
@@ -155,7 +155,7 @@ namespace UPfleet.Controllers
                 join b in bargeslist on o.OwnerName equals b.Owner into ownerBarges
                 where o != null && ownerBarges.Any() && ownerBarges.Any(b => transactionslist.Any(t => t.Barge == b.Barge_Name && _dbContext.Transfers.Any(m => m.Transaction == t.TransactionNo)))
                 orderby o.OwnerName
-                select new View_Model
+                select new UPFleetViewModel
                 {
                     Owner = o,
                     BargeList = ownerBarges.ToList(),

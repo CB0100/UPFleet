@@ -1,10 +1,10 @@
 ﻿using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
-using UPfleet.Data;
-using UPfleet.Models;
+using UPFleet.Data;
+using UPFleet.Models;
 using UPFleet.ViewModels;
 
-namespace UPfleet.Controllers
+namespace UPFleet.Controllers
 {
     public class MaintenanceController : Controller
     {
@@ -142,7 +142,7 @@ namespace UPfleet.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult SaveTransfers(List<View_Model> transferlist)
+        public IActionResult SaveTransfers(List<UPFleetViewModel> transferlist)
         {
             var transaction = TempData["tranactionNo"]?.ToString();
             TempData.Keep("BargeName");

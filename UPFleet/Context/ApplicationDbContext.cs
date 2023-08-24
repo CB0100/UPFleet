@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
 using System.Xml;
-using UPfleet.Models;
+using UPFleet.Models;
 
-namespace UPfleet.Data
+namespace UPFleet.Data
 {
     public class ApplicationDbContext:DbContext
     {

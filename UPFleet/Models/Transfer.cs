@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace UPfleet.Models
+namespace UPFleet.Models
 {
     [Table("Transfer")]
     public class Transfer

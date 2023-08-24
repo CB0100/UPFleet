@@ -6,11 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="C:\Users\CBPC-57\.nuget\packages\dinktopdfcopydependencies\1.0.8\build\libwkhtmltox.dll" />
-    <None Remove="C:\Users\CBPC-57\.nuget\packages\dinktopdfcopydependencies\1.0.8\build\libwkhtmltox.dylib" />
-    <None Remove="C:\Users\CBPC-57\.nuget\packages\dinktopdfcopydependencies\1.0.8\build\libwkhtmltox.so" />
-  </ItemGroup>
 
   <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\DevelopmentProfile.pubxml" />
@@ -22,8 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DinkToPdf" Version="1.0.8" />
-    <PackageReference Include="DinkToPdfCopyDependencies" Version="1.0.8" />
     <PackageReference Include="jQuery" Version="3.7.0" />
     <PackageReference Include="jQuery.Validation" Version="1.19.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0" />

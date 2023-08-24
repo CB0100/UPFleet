@@ -1,4 +1,4 @@
-﻿@model UPfleet.Models.Owner
+﻿@model UPFleet.Models.Owner
 @{
     ViewData["Title"] = "Add/Edit Owners";
 }
@@ -36,7 +36,7 @@
                                 <a href="@Url.Action("OwnerUpdate", "Maintenance", new { id = ((Model.ID)+1) })"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
                             </div>
                             <input type="submit" class="btn btn-primary m-1" value="Submit" id="btnid" />
-                            <a href="@Url.Action("GoBack", "Maintenance")"  class="btn btn-danger m-1 float-sm-end">Back</a>
+                            <a href="@Url.Action("GoBack", "Maintenance")" class="btn btn-danger m-1 float-sm-end" style="width: 25% !important">Back</a>
 
                         </div>
                     </div>

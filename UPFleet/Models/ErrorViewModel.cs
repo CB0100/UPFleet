@@ -1,4 +1,4 @@
-namespace UPfleet.Models
+namespace UPFleet.Models
 {
     public class ErrorViewModel
     {

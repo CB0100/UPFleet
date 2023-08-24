@@ -1,5 +1,4 @@
-﻿@using UPFleet.ViewModels
-@model List<UPFleet.ViewModels.View_Model>
+﻿@model List<UPFleetViewModel>
 
 <html>
 <head>
@@ -36,7 +35,7 @@
                 </h4>
             </div>
             <div>
-                @foreach (var barge in item.BargeList)
+                @foreach (var barge in item?.BargeList)
                 {
                     @foreach (var tranaction in item!.Transactionslist!.Where(m => m.Barge == barge.Barge_Name))
                     {

@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using UPfleet.Data;
-using UPfleet.Models;
+using UPFleet.Data;
+using UPFleet.Models;
 using UPFleet.ViewModels;
 
-namespace UPfleet.Controllers
+namespace UPFleet.Controllers
 {
     public class HomeController : Controller
     {
@@ -51,7 +50,7 @@ namespace UPfleet.Controllers
             {
 
                 var selectedData = data.FirstOrDefault();
-                var viewModel = new View_Model
+                var viewModel = new UPFleetViewModel
                 {
                     TransferList = _dbContext.Transfers.Where(m => m.Transaction == selectedData.TransactionNo).ToList(),
                     Transaction = selectedData,
@@ -70,7 +69,7 @@ namespace UPfleet.Controllers
                 TempData.Keep("BargeName");
                 TempData.Keep("tranactionNo");
 
-                var viewModel = new View_Model
+                var viewModel = new UPFleetViewModel
                 {
                     TransferList = _dbContext.Transfers.Where(m => m.Transaction == Transactionno).ToList(),
                     Transaction = _dbContext.Transactions.FirstOrDefault(m => m.TransactionNo == Transactionno),

@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Server.Kestrel.Core.Features;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace UPfleet.Models
+namespace UPFleet.Models
 {
     [Table("Barge")]
     public class Barge

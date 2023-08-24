@@ -11,63 +11,62 @@
         <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
         @*<a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>*@
     </div>
-<div class=" table-responsive">
-    <table class="border border-1 table table-striped">
-        <tr>
-            <th>HoursInFleet</th>
-            <th>Transaction.Barge</th>
-            <th>Transaction.Status</th>
-            <th>Transaction.Rate</th>
-            <th>Transfer</th>
-            <th>Transfer.Form</th>
-            <th>Transfer.To</th>
-            <th>Transfer.Status</th>
-            <th>Transfer.Daysln</th>
-            <th>Barge.Size</th>
-            <th>Barge.Rate</th>
-            <th>Barge.Owner</th>
-            <th>Barge.Description</th>
-            <th>Owner.Owner</th>
-            <th>Owner.Company</th>
-            <th>Owner.Address1</th>
-            <th>Owner.Address2</th>
-            <th>Owner.City</th>
-            <th>Owner.State</th>
-            <th>Owner.Zip</th>
-
-        </tr>
-        @foreach (var item in Model)
-        {
+    <div class=" table-responsive">
+        <table class="border border-1 table table-striped">
             <tr>
-                <td>
-                    @{
-                        TimeSpan? ts = item.GetTransfer.To - item.GetTransfer.From;
-                    }
-                    @ts?.TotalDays
-                </td>
-                <td>@item.GetTransaction.Barge</td>
-                <td>@item.GetTransaction.Status</td>
-                <td>@item.GetTransaction.Rate</td>
-                <td>@item.GetTransfer.TransferNO</td>
-                <td>@item.GetTransfer.From</td>
-                <td>@item.GetTransfer.To</td>
-                <td>@item.GetTransfer.Status</td>
-                <td>@item.GetTransfer.DaysIn</td>
-                <td>@item.GetBarge.Size</td>
-                <td>@item.GetBarge.Rate</td>
-                <td>@item.GetBarge.Owner</td>
-                <td>@item.GetBarge.Description</td>
-                <td>@item.GetOwner.OwnerName</td>
-                <td>@item.GetOwner.Company</td>
-                <td>@item.GetOwner.Address1</td>
-                <td>@item.GetOwner.Address2</td>
-                <td>@item.GetOwner.City</td>
-                <td>@item.GetOwner.State</td>
-                <td>@item.GetOwner.Zip</td>
+                <th>HoursInFleet</th>
+                <th>Transaction.Barge</th>
+                <th>Transaction.Status</th>
+                <th>Transaction.Rate</th>
+                <th>Transfer</th>
+                <th>Transfer.Form</th>
+                <th>Transfer.To</th>
+                <th>Transfer.Status</th>
+                <th>Transfer.Daysln</th>
+                <th>Barge.Size</th>
+                <th>Barge.Rate</th>
+                <th>Barge.Owner</th>
+                <th>Barge.Description</th>
+                <th>Owner.Owner</th>
+                <th>Owner.Company</th>
+                <th>Owner.Address1</th>
+                <th>Owner.Address2</th>
+                <th>Owner.City</th>
+                <th>Owner.State</th>
+                <th>Owner.Zip</th>
             </tr>
-        }
-    </table>
-</div>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @{
+                            TimeSpan? ts = item.GetTransfer.To - item.GetTransfer.From;
+                        }
+                        @ts?.TotalDays
+                    </td>
+                    <td>@item.GetTransaction.Barge</td>
+                    <td>@item.GetTransaction.Status</td>
+                    <td>@item.GetTransaction.Rate</td>
+                    <td>@item.GetTransfer.TransferNO</td>
+                    <td>@item.GetTransfer.From</td>
+                    <td>@item.GetTransfer.To</td>
+                    <td>@item.GetTransfer.Status</td>
+                    <td>@item.GetTransfer.DaysIn</td>
+                    <td>@item.GetBarge.Size</td>
+                    <td>@item.GetBarge.Rate</td>
+                    <td>@item.GetBarge.Owner</td>
+                    <td>@item.GetBarge.Description</td>
+                    <td>@item.GetOwner.OwnerName</td>
+                    <td>@item.GetOwner.Company</td>
+                    <td>@item.GetOwner.Address1</td>
+                    <td>@item.GetOwner.Address2</td>
+                    <td>@item.GetOwner.City</td>
+                    <td>@item.GetOwner.State</td>
+                    <td>@item.GetOwner.Zip</td>
+                </tr>
+            }
+        </table>
+    </div>
 </body>
 </html>
 @{
@@ -76,9 +75,9 @@
     <script>
         $(document).ready(function () {
             $("#prntbtn").click(function () {
-                $(".function-btn").hide(); 
+                $(".function-btn").hide();
                 window.print();
-                $(".function-btn").show(); 
+                $(".function-btn").show();
             });
         });
     </script>

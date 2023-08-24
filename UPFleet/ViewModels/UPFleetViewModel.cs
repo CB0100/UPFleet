@@ -1,8 +1,8 @@
-﻿using UPfleet.Models;
+﻿using UPFleet.Models;
 
 namespace UPFleet.ViewModels
 {
-    public class View_Model
+    public class UPFleetViewModel
     {
         public Barge? Barge { get; set; }
         public Owner? Owner { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace UPfleet.Models;
+namespace UPFleet.Models;
 
 public partial class PeachtreeExportedArchive
 {

@@ -1,6 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
-using UPfleet.Data;
+using UPFleet.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

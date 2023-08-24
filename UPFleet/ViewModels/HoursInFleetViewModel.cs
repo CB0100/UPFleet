@@ -1,4 +1,4 @@
-﻿using UPfleet.Models;
+﻿using UPFleet.Models;
 
 namespace UPFleet.ViewModels
 {

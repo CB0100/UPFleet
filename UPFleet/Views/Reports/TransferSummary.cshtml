@@ -1,76 +1,82 @@
-﻿@model IEnumerable<UPFleet.ViewModels.View_Model>
+﻿@model IEnumerable<UPFleet.ViewModels.UPFleetViewModel>
 
 <html>
 <head>
 </head>
 <body>
-    <div class="function-btn">
-         <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
-        <a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>
-    </div>
-    <table class="table" id="printTable">
-        <thead>
-            <tr>
-                <th>Barge Name</th>
-                <th>Owner</th>
-                <th>Total Cost</th>
-                <th>Transaction No</th>
-                <th>Barge Size</th>
-                <th>Rate</th>
-                <th>Total Days</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var transferView in Model)
-            {
-                @if (transferView.TransferList.Any())
+<div class="function-btn">
+    <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
+    <a id="prntbtn" title="Print This Report">
+        <img src="../image/printing.png">
+    </a>
+</div>
+    <div class="table-responsive">
+        <table class="table" id="printTable">
+            <thead>
+                <tr>
+                    <th style="width: 235px;">Barge Name</th>
+                    <th style="width: 270px;">Owner</th>
+                    <th style="width: 160px;">Total Cost</th>
+                    <th style="width: 120px;">Transaction No</th>
+                    <th style="width: 120px;">Barge Size</th>
+                    <th style="width: 120px;">Rate</th>
+                    <th style="width: 155px">Total Days</th>
+                    <th style="width: 130px;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transferView in Model)
                 {
-                    <tr>
-                        <td>@transferView.Barge.Barge_Name</td>
-                        <td>@transferView.Barge.Owner</td>
-                        <td>$@((int)(transferView.Barge.Rate ?? 0) * transferView.TransferList.Sum(t => t.DaysIn))</td>
-                        <td>@transferView.Transaction.TransactionNo</td>
-                        <td>@transferView.Barge.Size</td>
-                        <td>$@transferView.Barge.Rate</td>
-                        <td>@transferView.TransferList.Sum(t => t.DaysIn)</td>
-                        <td>@transferView.Transaction.Status</td>
-                    </tr>
-                    <tr>
-                        <td colspan="8">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 215px;">From</th>
-                                        <th style="width: 270px;">To</th>
-                                        <th style="width: 160px;">Cost</th>
-                                        <th colspan="3"></th>
-                                        <th style="width: 155px">Days In</th>
-                                        <th style="width: 130px;">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var transfer in transferView.TransferList)
-                                    {
+                    @if (transferView.TransferList.Any())
+                    {
+                        <tr>
+                            <td style="width: 235px;">@transferView.Barge.Barge_Name</td>
+                            <td style="width: 270px;">@transferView.Barge.Owner</td>
+                            <td style="width: 160px;">$@((int)(transferView.Barge.Rate ?? 0) * transferView.TransferList.Sum(t => t.DaysIn))</td>
+                            <td style="width: 120px;">@transferView.Transaction.TransactionNo</td>
+                            <td style="width: 120px;">@transferView.Barge.Size</td>
+                            <td style="width: 120px;">$@transferView.Barge.Rate</td>
+                            <td style="width: 155px">@transferView.TransferList.Sum(t => t.DaysIn)</td>
+                            <td style="width: 130px;">@transferView.Transaction.Status</td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" style="padding:10px 0;">
+                                <table class="table table-bordered">
+
+                                    <thead>
                                         <tr>
-                                            <td>@transfer.From</td>
-                                            <td>@transfer.To</td>
-                                            <td>
-                                                $@(transfer.DaysIn * transferView.Barge.Rate)
-                                            </td>
-                                            <td colspan="3"></td>
-                                            <td>@transfer.DaysIn</td>
-                                            <td>@transfer.Status</td>
+                                            <th style="width: 235px;">From</th>
+                                            <th style="width: 270px;">To</th>
+                                            <th style="width: 160px;">Cost</th>
+                                            <th style="width: 360px;" colspan="3"></th>
+                                            <th style="width: 155px">Days In</th>
+                                            <th style="width: 130px;">Status</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var transfer in transferView.TransferList)
+                                        {
+                                            <tr>
+                                                <td>@transfer.From</td>
+                                                <td>@transfer.To</td>
+                                                <td>
+                                                    $@(transfer.DaysIn * transferView.Barge.Rate)
+                                                </td>
+                                                <td colspan="3"></td>
+                                                <td>@transfer.DaysIn</td>
+                                                <td>@transfer.Status</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    }
                 }
-            }
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
+       
 </body>
 </html>
 @{
