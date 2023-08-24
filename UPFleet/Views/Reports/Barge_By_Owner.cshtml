@@ -49,12 +49,12 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const printButton = document.getElementById("function-btn");
-        printButton.style.display = "block"; // Show the button for normal display
-        printButton.addEventListener("click", function () {
-            printButton.style.display = "none"; // Hide the button before printing
-            window.print();
-            printButton.style.display = "block";
+        $(document).ready(function () {
+            $("#prntbtn").click(function () {
+                $(".function-btn").hide(); 
+                window.print();
+                $(".function-btn").show(); 
+            });
         });
     </script>
 }

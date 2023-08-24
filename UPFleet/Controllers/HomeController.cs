@@ -16,10 +16,26 @@ namespace UPfleet.Controllers
         }
         public IActionResult HomePage()
         {
-            IOrderedQueryable<Barge?> BargeList = _dbContext.Barges.OrderBy(m => m.Barge_Name);
-            ViewBag.Bargelist = BargeList;
+            List<Owner?> owners = _dbContext.Owners.Where(m=>_dbContext.Barges.Any(b=>b.Owner==m.OwnerName)).OrderBy(m => m.OwnerName).ToList();
+            ViewBag.Ownerlist = owners;
             return View();
         }
+
+        public IActionResult GetBargesByOwner(string owner)
+        {
+            if (owner == "All")
+            {
+                var barges = _dbContext.Barges.OrderBy(m => m.Barge_Name).ToList(); ; 
+                return Json(barges);
+            }
+            else
+            {
+                var barges= _dbContext.Barges.Where(m=>m.Owner==owner).OrderBy(m=>m.Barge_Name).ToList(); ; 
+                return Json(barges);
+            }
+            
+        }
+
         public IActionResult IndexPage(string? BargeName = null, double? Transactionno = null)
         {
             var bargeList = _dbContext.Barges.OrderBy(m => m.Barge_Name).ToList();

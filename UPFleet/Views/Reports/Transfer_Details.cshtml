@@ -1,85 +1,85 @@
-﻿@model List<UPFleet.ViewModels.TransferDetail_View_Model>
+﻿@model List<UPFleet.ViewModels.HoursInFleetViewModel>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Transfer Details</title>
+    <link rel="stylesheet" type="text/css" href="~/css/print-report.css">
 </head>
 <body>
-<div class="function-btn">
-     <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
-    <a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>
-</div>
-<table class="border border-1 table table-striped table-responsive">
-    <tr>
-        <th>HoursInFleet</th>
-        <th>Transaction.Barge</th>
-        <th>Transaction.Status</th>
-        <th>Transaction.Rate</th>
-        <th>Transfer</th>
-        <th>Transfer.Form</th>
-        <th>Transfer.To</th>
-        <th>Transfer.Status</th>
-        <th>Transfer.Daysln</th>
-        <th>Transfer.Status</th>
-        <th>Barge.Barge</th>
-        <th>Barge.Size</th>
-        <th>Barge.Rate</th>
-        <th>Barge.Owner</th>
-        <th>Barge.Description</th>
-        <th>Owner.Owner</th>
-        <th>Owner.Company</th>
-        <th>Owner.Addresh1</th>
-        <th>Owner.Addresh2</th>
-        <th>Owner.City</th>
-        <th>Owner.State</th>
-        <th>Owner.Zip</th>
-
-    </tr>
-    @foreach (var item in Model)
-    {
+    <div class="function-btn">
+        <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
+        @*<a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>*@
+    </div>
+<div class=" table-responsive">
+    <table class="border border-1 table table-striped">
         <tr>
-            <td>
-                @{
-                    TimeSpan? ts = item.GetTransfer.To - item.GetTransfer.From;
-                }
-                @ts?.TotalHours
-            </td>
-            <td>@item.GetTransaction.Barge</td>
-            <td>@item.GetTransaction.Status</td>
-            <td>@item.GetTransaction.Rate</td>
-            <td>@item.GetTransfer.TransferNO</td>
-            <td>@item.GetTransfer.From</td>
-            <td>@item.GetTransfer.To</td>
-            <td>@item.GetTransfer.Status</td>
-            <td>@item.GetTransfer.DaysIn</td>
-            <td>@item.GetBarge.Barge_Name</td>
-            <td>@item.GetBarge.Size</td>
-            <td>@item.GetBarge.Rate</td>
-            <td>@item.GetBarge.Owner</td>
-            <td>@item.GetBarge.Description</td>
-            <td>@item.GetOwner.OwnerName</td>
-            <td>@item.GetOwner.Company</td>
-            <td>@item.GetOwner.Address1</td>
-            <td>@item.GetOwner.Address2</td>
-            <td>@item.GetOwner.City</td>
-            <td>@item.GetOwner.State</td>
-            <td>@item.GetOwner.Zip</td>
+            <th>HoursInFleet</th>
+            <th>Transaction.Barge</th>
+            <th>Transaction.Status</th>
+            <th>Transaction.Rate</th>
+            <th>Transfer</th>
+            <th>Transfer.Form</th>
+            <th>Transfer.To</th>
+            <th>Transfer.Status</th>
+            <th>Transfer.Daysln</th>
+            <th>Barge.Size</th>
+            <th>Barge.Rate</th>
+            <th>Barge.Owner</th>
+            <th>Barge.Description</th>
+            <th>Owner.Owner</th>
+            <th>Owner.Company</th>
+            <th>Owner.Address1</th>
+            <th>Owner.Address2</th>
+            <th>Owner.City</th>
+            <th>Owner.State</th>
+            <th>Owner.Zip</th>
+
         </tr>
-    }
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @{
+                        TimeSpan? ts = item.GetTransfer.To - item.GetTransfer.From;
+                    }
+                    @ts?.TotalDays
+                </td>
+                <td>@item.GetTransaction.Barge</td>
+                <td>@item.GetTransaction.Status</td>
+                <td>@item.GetTransaction.Rate</td>
+                <td>@item.GetTransfer.TransferNO</td>
+                <td>@item.GetTransfer.From</td>
+                <td>@item.GetTransfer.To</td>
+                <td>@item.GetTransfer.Status</td>
+                <td>@item.GetTransfer.DaysIn</td>
+                <td>@item.GetBarge.Size</td>
+                <td>@item.GetBarge.Rate</td>
+                <td>@item.GetBarge.Owner</td>
+                <td>@item.GetBarge.Description</td>
+                <td>@item.GetOwner.OwnerName</td>
+                <td>@item.GetOwner.Company</td>
+                <td>@item.GetOwner.Address1</td>
+                <td>@item.GetOwner.Address2</td>
+                <td>@item.GetOwner.City</td>
+                <td>@item.GetOwner.State</td>
+                <td>@item.GetOwner.Zip</td>
+            </tr>
+        }
+    </table>
+</div>
 </body>
 </html>
 @{
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const printButton = document.getElementById("function-btn");
-        printButton.style.display = "block"; // Show the button for normal display
-        printButton.addEventListener("click", function () {
-            printButton.style.display = "none"; // Hide the button before printing
-            window.print();
-            printButton.style.display = "block";
+        $(document).ready(function () {
+            $("#prntbtn").click(function () {
+                $(".function-btn").hide(); 
+                window.print();
+                $(".function-btn").show(); 
+            });
         });
     </script>
 }

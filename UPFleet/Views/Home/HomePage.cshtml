@@ -1,4 +1,4 @@
-﻿@model List<Barge>
+﻿@model List<Owner>
 
 
 @{
@@ -15,33 +15,30 @@
                 <div class="card-body">
                     <div>
                         <h3>UPFleet Barge Selection</h3>
-                        <span>Select a barge from the list</span> @*or enter a new barge number.*@
                     </div>
+                    <span>Filter By Owner</span>
+                    <select id="ownerDropdown" class="form-control">
+                        <option value="All" selected="">All</option>
+                        @foreach (var owner in ViewBag.OwnerList)
+                        {
+                            <option value="@owner.OwnerName">@owner.OwnerName</option>
+                        }
+                    </select>
+                    <span>Select a barge from the list</span> 
                     <div class="form-group">
                         <select id="bargeDropdown" class="form-control">
-                            @foreach (var barge in ViewBag.BargeList)
-                            {
-                                <option value="@barge.Barge_Name">@barge.Barge_Name</option>
-                            }
+                            <!-- Barge options will be dynamically populated here -->
                         </select>
                     </div>
                 </div>
                 <div class="card-footer card-action-control">
-                    <button class="btn btn-primary home-btn" onclick="Okbutton()">OK</button>
+                    <button class="btn btn-primary home-btn" id="okButton">OK</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-@{
-    <script src="jquery-3.6.4.min.js"></script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function Okbutton() {
-            var value = jQuery('select[id=bargeDropdown] option').filter(':selected').val();
-            window.location.href = "/Home/IndexPage?BargeName=" + value;
-        }
-    </script>
+@section Scripts{
+    <script src="~/js/jshomepage.js"></script>
 }

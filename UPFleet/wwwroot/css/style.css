@@ -155,7 +155,6 @@
  .btn-primary:hover {
     background: #07c8dc;
     color: #fff;
-    border: none;
 }
  .report-btn-primary {
     padding: 24px 0px;
@@ -237,6 +236,7 @@
     display: flex;
     align-items: center;
     width: 140px;
+    margin-bottom: 15px;
 }
  a#prntbtn img {
     max-width: 25px;
@@ -302,4 +302,50 @@
  .home-btn {
     background-color: #8c8bdd;
     border: none;
+}
+ table.table.table-bordered th {
+     padding: 5px;
+     white-space: nowrap;
+ }
+ .transactions-data span {
+     white-space: nowrap;
+ }
+ .row.transactions-head {
+     margin: 15px 0;
+ }
+ .transactions-data h5 {
+     white-space: nowrap;
+ }
+
+
+
+
+/* Media Query */
+
+@media(max-width: 991px) {
+
+}
+
+ @media(max-width: 767px) {
+ }
+
+ @media(max-width: 567px) {
+     .p-4 {padding:0px!important 
+     }
+     main.pb-3 h4 {
+        font-size: 18px;
+    }
+     div#printTable {
+         padding: 0;
+     }
+     
+ }
+ @media(max-width: 467px) {
+     .transactions-data h5 {
+         text-align: center;
+         font-size: 14px
+     }
+ }
+ 
+ @media(max-width: 367px) {
 }

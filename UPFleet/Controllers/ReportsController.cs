@@ -45,7 +45,8 @@ namespace UPfleet.Controllers
                 join t in transactionlist on tr.Transaction equals t.TransactionNo
                 join b in Bargelist on t.Barge equals b.Barge_Name
                 join o in Ownerlist on b.Owner equals o.OwnerName
-                select new TransferDetail_View_Model
+                where tr.To > new DateTime(2023, 1, 1) && tr.Status!="Billed" && !string.IsNullOrEmpty(tr.Status)
+                select new HoursInFleetViewModel
                 {
                     GetBarge = b,
                     GetOwner = o,

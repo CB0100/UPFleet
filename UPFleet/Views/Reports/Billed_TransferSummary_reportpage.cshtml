@@ -17,13 +17,13 @@
     </div>
     @foreach (var item in Model.Skip(page * pageSize).Take(pageSize))
     {
-        <div class="p-4">
+            <div class="p-4 mt-3">
             <div>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-sm-12 col-md-6">
                         <h4>@item?.Owner?.Company</h4>
                     </div>
-                    <div class="col-6">
+                        <div class="col-sm-12 col-md-6">
                         <h4>@item?.Owner?.OwnerName</h4>
                     </div>
                 </div>
@@ -41,59 +41,61 @@
                     @foreach (var tranaction in item!.Transactionslist!.Where(m => m.Barge == barge.Barge_Name))
                     {
                         <div class="row transactions-head">
-                            <div class="col-md-6 transactions-data">
+                                <div class="col-sm-6 col-md-6 col-6 transactions-data">
                                 <h5>Barge:<span>@tranaction?.Barge</span></h5>
                             </div>
-                            <div class="col-md-6 transactions-data">
+                                <div class="col-sm-6 col-md-6 col-6 transactions-data">
                                 <h5>Rate:<span>$@tranaction?.Rate</span></h5>
                             </div>
-                            <div class="col-md-6 transactions-data">
+                            <div class="col-sm-6 col-md-6 col-6 transactions-data">
                                 <h5>Status:<span>@tranaction?.Status</span></h5>
                             </div>
-                            <div class="col-md-6 transactions-data">
+                                <div class="col-sm-6 col-md-6 col-6 transactions-data">
                                 <h5>Tranaction #:<span>@tranaction?.TransactionNo</span></h5>
                             </div>
                         </div>
+                            <div class=" table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th width="250px">From</th>
+                                            <th>To</th>
+                                            <th>Cost</th>
+                                            <th>Transfer #</th>
+                                            <th>Status</th>
+                                            <th>Days In</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var transfer in item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo))
+                                        {
+                                            <tr>
+                                                <td>@transfer.From</td>
+                                                <td>@transfer.To</td>
+                                                <td>
+                                                    $@(transfer.DaysIn * tranaction.Rate)
+                                                </td>
+                                                <td>@transfer.TransferNO</td>
+                                                <td>@transfer.Status</td>
+                                                <td>@transfer.DaysIn</td>
+                                            </tr>
+                                        }
+                                        <tr>
+                                            <td colspan="6">
+                                                <p>Summary for Transaction# @tranaction.TransactionNo (@item!.TransferList!.Count(m => m.Transaction == tranaction.TransactionNo) details Record)</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">Sum</td>
+                                            <td colspan="2">$@((int)(tranaction.Rate ?? 0) * item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn))
+                                            <td />
+                                            <td colspan="2">@item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn)</td>
+                                        </tr>
 
-                        <table class="table table-bordered table-responsive">
-                            <thead>
-                            <tr>
-                                <th width="250px">From</th>
-                                <th>To</th>
-                                <th>Cost</th>
-                                <th>Transfer #</th>
-                                <th>Status</th>
-                                <th>Days In</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var transfer in item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo))
-                            {
-                                <tr>
-                                    <td>@transfer.From</td>
-                                    <td>@transfer.To</td>
-                                    <td>
-                                        $@(transfer.DaysIn * tranaction.Rate)
-                                    </td>
-                                    <td>@transfer.TransferNO</td>
-                                    <td>@transfer.Status</td>
-                                    <td>@transfer.DaysIn</td>
-                                </tr>
-                            }
-                            <tr>
-                                <td colspan="6">
-                                    <p>Summary for Transaction# @tranaction.TransactionNo (@item!.TransferList!.Count(m => m.Transaction == tranaction.TransactionNo) details Record)</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="2">Sum</td>
-                                <td colspan="2">$@((int)(tranaction.Rate ?? 0) * item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn))
-                                <td/>
-                                <td colspan="2">@item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn)</td>
-                            </tr>
-
-                            </tbody>
-                        </table>
+                                    </tbody>
+                                </table>
+                            </div>
+                        
                     }
                 }
             </div>
@@ -112,21 +114,13 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
-            const printButton = $("#function-btn");
-            const paginationContainer = $(".navcontainer");
-
-            printButton.css("display", "block");
-            paginationContainer.css("display", "block"); // Show the pagination container
-
-            printButton.on("click", function () {
-                printButton.css("display", "none");
-                paginationContainer.css("display", "none"); // Hide the pagination container
+            $("#prntbtn").on("click", function () {
+                $(".function-btn").css("display", "none");
+                $(".navcontainer").css("display", "none"); // Hide the pagination container
                 window.print();
-                printButton.css("display", "block");
-                paginationContainer.css("display", "block"); // Show the pagination container again after printing
+                $(".function-btn").css("display", "initial");
+                $(".navcontainer").css("display", "initial"); // Show the pagination container again after printing
             });
         });
-
-
     </script>
 }

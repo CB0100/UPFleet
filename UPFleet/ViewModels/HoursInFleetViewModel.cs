@@ -2,7 +2,7 @@
 
 namespace UPFleet.ViewModels
 {
-    public class TransferDetail_View_Model
+    public class HoursInFleetViewModel
     {
         public Barge GetBarge { get; set; }
         public Owner GetOwner { get; set; }

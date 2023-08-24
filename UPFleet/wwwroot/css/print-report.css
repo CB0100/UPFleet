@@ -1,0 +1,19 @@
+﻿@media print {
+    body {
+        font-size: 12px; /* Adjust font size for print */
+    }
+
+    table {
+        width: 100%; /* Make the table occupy the full width of the page */
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 5px;
+    }
+
+    .function-btn {
+        display: none; /* Hide the buttons during printing */
+    }
+}
