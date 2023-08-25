@@ -36,10 +36,17 @@
                 <div class="tab-pane fade show active" id="home">
                     <div id="transfersGrid" class="row">
                         <div class="col-sm-12 table-responsive">
-                            <h4>Tranactions</h4>
-                            <div>
-                                @await Html.PartialAsync("_TransfersGrid", Model.Transactionslist)
-                            </div>
+                            @if (Model.Transactionslist != null)
+                            {
+                                <h4>Tranactions</h4>
+                                <div>
+                                    @await Html.PartialAsync("_TransfersGrid", Model.Transactionslist)
+                                </div>
+                            }
+                            else
+                            {
+                                <h4>No Tranactions/Transfers for this Barge..</h4>
+                            }
                         </div>
                     </div>
                     <div class="border-1 row">
@@ -47,7 +54,7 @@
                             <div class="col-sm-2">
                                 <div class="form-group">
                                     <label>Barge</label>
-                                    <select id="bargeDropdown" class="form-control">
+                                    <select id="bargeDropdown" class="form-control" disabled="true">
                                         @foreach (var barge in ViewBag.BargeList)
                                         {
                                             <option value="@barge.Barge_Name" selected="@(barge.Barge_Name == Model.Barge?.Barge_Name)">@barge.Barge_Name</option>
@@ -70,7 +77,10 @@
                             <div class="col-sm-2">
                                 <div class="form-group">
                                     <label>Rate (In $)</label>
-                                    <input id="rateInput" type="text" class="form-control" value="@Model?.Transaction?.Rate">
+                                    @{
+                                        var rateToUse = Model?.Transaction?.Rate ?? Model?.Barge?.Rate;
+                                    }
+                                    <input id="rateInput" type="text" class="form-control" value="@rateToUse">
                                 </div>
                             </div>
                             <div class="col-sm-2">
@@ -95,6 +105,9 @@
                                         <a id="addTransactionButton" class="btn btn-outline" title="Add New Transaction">
                                             <img src="../image/add-button.png" alt="Add New Transaction">
                                         </a>
+                                        <a id="Cancelbtn" style="display: none;" class="btn btn-outline" title="Cancel Transaction">
+                                            <img src="../image/cross.png" alt="Cancel Transaction">
+                                        </a>
                                         <a id="deleteButton" class="btn btn-outline" title="Delete This Transaction">
                                             <img src="../image/bin.png" alt="Delete This Transaction">
                                         </a>
@@ -109,94 +122,94 @@
 
                         <form id="transferForm" method="post" asp-action="SaveTransfers" asp-controller="Maintenance">
                             <h4>Transfers</h4>
-                            <hr/>
+                            <hr />
                             <div class="row">
                                 <div class="col-12 table-responsive">
                                     <table id="dynamicTable" class="table table-striped">
                                         <thead>
-                                        <tr>
-                                            <th class="w-10">From Date</th>
-                                            <th class="w-10">To Date</th>
-                                            <th>Status</th>
-                                            <th class="text-nowrap">Fleet Days</th>
-                                            <th class="w-10 text-nowrap">Insurance From Date</th>
-                                            <th class="text-nowrap">Insurance Days</th>
-                                            <th class="text-nowrap"><a id="addRowButton" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Row</a></th>
-                                        </tr>
+                                            <tr>
+                                                <th class="w-10">From Date</th>
+                                                <th class="w-10">To Date</th>
+                                                <th>Status</th>
+                                                <th class="text-nowrap">Fleet Days</th>
+                                                <th class="w-10 text-nowrap">Insurance From Date</th>
+                                                <th class="text-nowrap">Insurance Days</th>
+                                                <th class="text-nowrap"><a id="addRowButton" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Row</a></th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        @if (Model.TransferList != null)
-                                        {
-                                            for (int i = 0; i < Model.TransferList.Count; i++)
+                                            @if (Model.TransferList != null)
+                                            {
+                                                for (int i = 0; i < Model.TransferList.Count; i++)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <input name="transferlist[@i].Transfer.From" type="datetime-local" class="form-control" value="@Model.TransferList[i].From?.ToString("yyyy-MM-ddTHH:mm")" />
+                                                        </td>
+                                                        <td>
+                                                            <input name="transferlist[@i].Transfer.To" type="datetime-local" class="form-control" value="@Model.TransferList[i].To?.ToString("yyyy-MM-ddTHH:mm")" />
+                                                        </td>
+                                                        <td>
+                                                            <select id="statusDropdown_2" name="transferlist[@i].Transfer.Status" class="form-control">
+                                                                <option value="In" selected="@(Model.TransferList[i].Status == "In")">In</option>
+                                                                <option value="Out" selected="@(Model.TransferList[i].Status == "Out")">Out</option>
+                                                                <option value="Last switched" selected="@(Model.TransferList[i].Status == "Last switched")">Last switched</option>
+                                                                <option value="To Bill" selected="@(Model.TransferList[i].Status == "To Bill")">To Bill</option>
+                                                                <option value="Billed" selected="@(Model.TransferList[i].Status == "Billed")">Billed</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <input disabled name="transferlist[@i].Transfer.DaysIn" class="form-control" value="@Model.TransferList[i].DaysIn" />
+                                                        </td>
+                                                        <td>
+                                                            <input name="transferlist[@i].Transfer.FromIns" type="datetime-local" class="form-control" value="@Model.TransferList[i].FromIns" />
+                                                        </td>
+                                                        <td>
+                                                            <input disabled name="transferlist[@i].Transfer.InsuranceDays" class="form-control" value="@Model.TransferList[i].InsuranceDays" />
+                                                        </td>
+                                                        <td>
+                                                            <input type="hidden" name="transferlist[@i].Transfer.ID" value="@Model.TransferList[i].ID" />
+                                                            <input type="hidden" name="transferlist[0].Transfer.transaction" value="@Model.TransferList[0].TransferNO" />
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
                                             {
                                                 <tr>
                                                     <td>
-                                                        <input name="transferlist[@i].Transfer.From" type="datetime-local" class="form-control" value="@Model.TransferList[i].From?.ToString("yyyy-MM-ddTHH:mm")"/>
+                                                        <input name="transferlist[0].Transfer.From" type="datetime-local" class="form-control" />
                                                     </td>
                                                     <td>
-                                                        <input name="transferlist[@i].Transfer.To" type="datetime-local" class="form-control" value="@Model.TransferList[i].To?.ToString("yyyy-MM-ddTHH:mm")"/>
+                                                        <input name="transferlist[0].Transfer.To" type="datetime-local" class="form-control" />
                                                     </td>
                                                     <td>
-                                                        <select id="statusDropdown_2" name="transferlist[@i].Transfer.Status" class="form-control">
-                                                            <option value="In" selected="@(Model.TransferList[i].Status == "In")">In</option>
-                                                            <option value="Out" selected="@(Model.TransferList[i].Status == "Out")">Out</option>
-                                                            <option value="Last switched" selected="@(Model.TransferList[i].Status == "Last switched")">Last switched</option>
-                                                            <option value="To Bill" selected="@(Model.TransferList[i].Status == "To Bill")">To Bill</option>
-                                                            <option value="Billed" selected="@(Model.TransferList[i].Status == "Billed")">Billed</option>
+                                                        <select id="statusDropdown_2" name="transferlist[0].Transfer.Status" class="form-control">
+                                                            <option value="In">In</option>
+                                                            <option value="Out">Out</option>
+                                                            <option value="Last switched">Last switched</option>
+                                                            <option value="To Bill">To Bill</option>
+                                                            <option value="Billed">Billed</option>
                                                         </select>
                                                     </td>
                                                     <td>
-                                                        <input disabled name="transferlist[@i].Transfer.DaysIn" class="form-control" value="@Model.TransferList[i].DaysIn"/>
+                                                        <input disabled name="transferlist[0].Transfer.DaysIn" class="form-control" />
                                                     </td>
                                                     <td>
-                                                        <input name="transferlist[@i].Transfer.FromIns" type="datetime-local" class="form-control" value="@Model.TransferList[i].FromIns"/>
+                                                        <input name="transferlist[0].Transfer.FromIns" type="datetime-local" class="form-control" />
                                                     </td>
                                                     <td>
-                                                        <input disabled name="transferlist[@i].Transfer.InsuranceDays" class="form-control" value="@Model.TransferList[i].InsuranceDays"/>
+                                                        <input disabled name="transferlist[0].Transfer.InsuranceDays" class="form-control" />
                                                     </td>
                                                     <td>
-                                                        <input type="hidden" name="transferlist[@i].Transfer.ID" value="@Model.TransferList[i].ID"/>
-                                                        <input type="hidden" name="transferlist[0].Transfer.transaction" value="@Model.TransferList[0].TransferNO"/>
                                                     </td>
                                                 </tr>
                                             }
-                                        }
-                                        else
-                                        {
-                                            <tr>
-                                                <td>
-                                                    <input name="transferlist[0].Transfer.From" type="datetime-local" class="form-control"/>
-                                                </td>
-                                                <td>
-                                                    <input name="transferlist[0].Transfer.To" type="datetime-local" class="form-control"/>
-                                                </td>
-                                                <td>
-                                                    <select id="statusDropdown_2" name="transferlist[0].Transfer.Status" class="form-control">
-                                                        <option value="In">In</option>
-                                                        <option value="Out">Out</option>
-                                                        <option value="Last switched">Last switched</option>
-                                                        <option value="To Bill">To Bill</option>
-                                                        <option value="Billed">Billed</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <input disabled name="transferlist[0].Transfer.DaysIn" class="form-control"/>
-                                                </td>
-                                                <td>
-                                                    <input name="transferlist[0].Transfer.FromIns" type="datetime-local" class="form-control"/>
-                                                </td>
-                                                <td>
-                                                    <input disabled name="transferlist[0].Transfer.InsuranceDays" class="form-control"/>
-                                                </td>
-                                                <td>
-                                                </td>
-                                            </tr>
-                                        }
                                         </tbody>
                                         <tfoot>
-                                        <tr class="card-action-control">
-                                            <td colspan="7"><button id="savetransfer" style="display: none;" type="submit" class="btn btn-outline-success float-end">Save Transfers</button></td>
-                                        </tr>
+                                            <tr class="card-action-control">
+                                                <td colspan="7"><button id="savetransfer" style="display: none;" type="submit" class="btn btn-outline-success float-end">Save Transfers</button></td>
+                                            </tr>
                                         </tfoot>
                                     </table>
                                 </div>
@@ -205,8 +218,8 @@
                         </form>
                     </div>
                 </div>
-                
-                   
+
+
 
                 @*Reports*@
                 <div class="tab-pane fade" id="profile">
@@ -253,8 +266,8 @@
                                 </div>
                             </div>
                         </div>
-                       
-                       
+
+
                     </div>
                 </div>
                 <div class="tab-pane fade" id="messages">

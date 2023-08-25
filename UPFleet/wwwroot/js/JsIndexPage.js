@@ -29,9 +29,7 @@ $(document).ready(function () {
 						$('#ownerInput').val(response.owner);
 						$('#transactionInput').val(response.transaction);
 						checkTranactioninputSelection();
-						$('#previewButton').show();
-						$('#deleteButton').show();
-						$('#previewtoexportbutton').show();
+                        $('#Cancelbtn').hide();
 					},
 					error: function () {
 						console.log('Error occurred while retrieving barge details.');
@@ -63,6 +61,9 @@ $(document).ready(function () {
 
 		rowCount++;
 	});
+	$('#Cancelbtn').on('click', function () {
+		location.reload();
+	});
 	$('#addTransactionButton').on('click',
 		function () {
 			// Clear all fields
@@ -80,10 +81,11 @@ $(document).ready(function () {
 
 			StatusOption2.prop('selected', true);
 			// Hide the partial view and buttons
-			$('#transfersGrid, #previewButton, #deleteButton, #previewtoexportbutton, #updateButton, #savetransfer').hide();
+			$('#transfersGrid,  #deleteButton,  #updateButton, #savetransfer').hide();
 
 			// Show the Add New Transaction button
 			$(this).show();
+            $('#Cancelbtn').show();
 
 			$('#bargeDropdown').prop('disabled', false);
 		});
@@ -94,9 +96,13 @@ $(document).ready(function () {
 		if (selectedValue !== '') {
 			$('#savetransfer').show();
 			$('#updateButton').show();
+			$('#deleteButton').show();
+            $('#Cancelbtn').hide();
+
 			$('#bargeDropdown').prop('disabled', true);
 		} else {
 			$('#savetransfer').hide();
+			$('#deleteButton').hide();
 			$('#updateButton').hide();
 		}
 	}

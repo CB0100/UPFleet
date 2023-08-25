@@ -316,16 +316,27 @@
  table#printTable th {
      white-space: nowrap;
  }
+ .form-group label {
+     white-space: nowrap;
+ }
 
 
 
 /* Media Query */
 
 @media(max-width: 991px) {
-
+    .d-flex-block a {
+        padding: 0px 5px !important;
+    }
 }
 
  @media(max-width: 767px) {
+    .d-flex-block a {
+        padding: 0px 3px!important;
+    }
+     .btn-outline img {
+         max-width: 25px;
+     }
  }
 
  @media(max-width: 567px) {

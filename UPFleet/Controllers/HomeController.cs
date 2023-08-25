@@ -15,7 +15,7 @@ namespace UPFleet.Controllers
         }
         public IActionResult HomePage()
         {
-            List<Owner?> owners = _dbContext.Owners.Where(m=>_dbContext.Barges.Any(b=>b.Owner==m.OwnerName)).OrderBy(m => m.OwnerName).ToList();
+            List<Owner?> owners = _dbContext.Owners.Where(m => _dbContext.Barges.Any(b => b.Owner == m.OwnerName)).OrderBy(m => m.OwnerName).ToList();
             ViewBag.Ownerlist = owners;
             return View();
         }
@@ -24,15 +24,15 @@ namespace UPFleet.Controllers
         {
             if (owner == "All")
             {
-                var barges = _dbContext.Barges.OrderBy(m => m.Barge_Name).ToList(); ; 
+                var barges = _dbContext.Barges.OrderBy(m => m.Barge_Name).ToList(); ;
                 return Json(barges);
             }
             else
             {
-                var barges= _dbContext.Barges.Where(m=>m.Owner==owner).OrderBy(m=>m.Barge_Name).ToList(); ; 
+                var barges = _dbContext.Barges.Where(m => m.Owner == owner).OrderBy(m => m.Barge_Name).ToList(); ;
                 return Json(barges);
             }
-            
+
         }
 
         public IActionResult IndexPage(string? BargeName = null, double? Transactionno = null)
@@ -41,26 +41,36 @@ namespace UPFleet.Controllers
             bargeList.Insert(0, new Barge { Barge_Name = "Select Barge" });
             ViewBag.Bargelist = bargeList;
 
-                var data = _dbContext.Transactions
-                    .Where(m => m.Barge == BargeName && _dbContext.Transfers.Any(tr => tr.Transaction == m.TransactionNo &&
-                        (tr.From != null || tr.To != null)))
-                    .OrderBy(m => m.TransactionNo)
-                    .ToList();
+            var data = _dbContext.Transactions
+                .Where(m => m.Barge == BargeName && _dbContext.Transfers.Any(tr => tr.Transaction == m.TransactionNo &&
+                    (tr.From != null || tr.To != null)))
+                .OrderBy(m => m.TransactionNo)
+                .ToList();
             if (BargeName != null)
             {
-
-                var selectedData = data.FirstOrDefault();
-                var viewModel = new UPFleetViewModel
-                {
-                    TransferList = _dbContext.Transfers.Where(m => m.Transaction == selectedData.TransactionNo).ToList(),
-                    Transaction = selectedData,
-                    Transactionslist = data,
-                    Barge = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == BargeName)
-                };
-
                 TempData["BargeName"] = BargeName;
-                TempData["tranactionNo"] = selectedData.TransactionNo.ToString();
-                return View(viewModel);
+                var selectedData = data.FirstOrDefault();
+                if (selectedData == null)
+                {
+                    var viewModel = new UPFleetViewModel
+                    {
+                        Barge = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == BargeName)
+                    };
+                    return View(viewModel);
+                }
+                else
+                {
+                    var viewModel = new UPFleetViewModel
+                    {
+                        TransferList = _dbContext.Transfers.Where(m => m.Transaction == selectedData.TransactionNo).ToList(),
+                        Transaction = selectedData,
+                        Transactionslist = data,
+                        Barge = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == BargeName)
+                    };
+                    TempData["tranactionNo"] = selectedData.TransactionNo.ToString();
+                    return View(viewModel);
+                }
+
             }
             else if (Transactionno != null)
             {
@@ -68,20 +78,26 @@ namespace UPFleet.Controllers
                 TempData["tranactionNo"] = Transactionno.ToString();
                 TempData.Keep("BargeName");
                 TempData.Keep("tranactionNo");
-
-                var viewModel = new UPFleetViewModel
+                if (_dbContext.Transfers.Any(m => m.Transaction == Transactionno && (m.From != null || m.To != null)))
                 {
-                    TransferList = _dbContext.Transfers.Where(m => m.Transaction == Transactionno).ToList(),
-                    Transaction = _dbContext.Transactions.FirstOrDefault(m => m.TransactionNo == Transactionno),
-                    Transactionslist = _dbContext.Transactions
-                        .Where(m => m.Barge == bargename && _dbContext.Transfers.Any(tr => tr.Transaction == m.TransactionNo &&
-                            (tr.From != null || tr.To != null)))
-                        .OrderBy(m => m.TransactionNo)
-                        .ToList(),
-                    Barge = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == bargename)
-                };
-
-                return View(viewModel);
+                    var viewModel = new UPFleetViewModel
+                    {
+                        TransferList = _dbContext.Transfers.Where(m => m.Transaction == Transactionno).ToList(),
+                        Transaction = _dbContext.Transactions.FirstOrDefault(m => m.TransactionNo == Transactionno),
+                        Transactionslist = _dbContext.Transactions
+                            .Where(m => m.Barge == bargename && _dbContext.Transfers.Any(tr =>
+                                tr.Transaction == m.TransactionNo &&
+                                (tr.From != null || tr.To != null)))
+                            .OrderBy(m => m.TransactionNo)
+                            .ToList(),
+                        Barge = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == bargename)
+                    };
+                    return View(viewModel);
+                }
+                else
+                {
+                    return RedirectToAction("IndexPage", "Home", new { BargeName = bargename });
+                }
             }
 
             return View();
