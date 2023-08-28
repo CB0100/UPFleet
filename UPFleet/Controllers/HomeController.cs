@@ -64,7 +64,7 @@ namespace UPFleet.Controllers
                 {
                     var viewModel = new UPFleetViewModel
                     {
-                        TransferList = _dbContext.Transfers.Where(m => m.Transaction == selectedData.TransactionNo).ToList(),
+                        TransferList = _dbContext.Transfers.Where(m => m.Transaction == selectedData.TransactionNo && (m.From != null || m.To != null)).ToList(),
                         Transaction = selectedData,
                         Transactionslist = data,
                         Barge = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == BargeName)
@@ -84,7 +84,7 @@ namespace UPFleet.Controllers
                 {
                     var viewModel = new UPFleetViewModel
                     {
-                        TransferList = _dbContext.Transfers.Where(m => m.Transaction == Transactionno).ToList(),
+                        TransferList = _dbContext.Transfers.Where(m => m.Transaction == Transactionno && (m.From != null || m.To != null)).ToList(),
                         Transaction = _dbContext.Transactions.FirstOrDefault(m => m.TransactionNo == Transactionno),
                         Transactionslist = _dbContext.Transactions
                             .Where(m => m.Barge == bargename && _dbContext.Transfers.Any(tr =>

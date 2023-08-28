@@ -38,14 +38,14 @@
                         <div class="col-sm-12 table-responsive">
                             @if (Model.Transactionslist != null)
                             {
-                                <h4>Tranactions</h4>
+                                <h4>Transactions</h4>
                                 <div>
                                     @await Html.PartialAsync("_TransfersGrid", Model.Transactionslist)
                                 </div>
                             }
                             else
                             {
-                                <h4>No Tranactions/Transfers for this Barge..</h4>
+                                <h4>No Transactions/Transfers for this Barge..</h4>
                             }
                         </div>
                     </div>

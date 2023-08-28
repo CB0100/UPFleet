@@ -101,7 +101,7 @@
         </div>
     }
 </div>
-    <div class="container navcontainer" style="display:none">
+    <div class="container navcontainer" style="">
         <nav aria-label="Page navigation">
             @await Html.PartialAsync("PaginationPartial", new PaginationViewModel { TotalPages = (int)Math.Ceiling((double)Model.Count / pageSize), CurrentPage = page })
         </nav>
