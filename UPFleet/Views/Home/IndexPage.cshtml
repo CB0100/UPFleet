@@ -54,7 +54,7 @@
                             <div class="col-sm-2">
                                 <div class="form-group">
                                     <label>Barge</label>
-                                    <select id="bargeDropdown" class="form-control form-select" disabled="true">
+                                    <select id="bargeDropdown" class="form-control" disabled="true">
                                         @foreach (var barge in ViewBag.BargeList)
                                         {
                                             <option value="@barge.Barge_Name" selected="@(barge.Barge_Name == Model.Barge?.Barge_Name)">@barge.Barge_Name</option>
