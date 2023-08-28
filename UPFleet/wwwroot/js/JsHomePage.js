@@ -41,7 +41,7 @@
 
     function Okbutton() {
         var selectedOption = $('#bargeDropdown').val();
-        if (selectedOption) {
+        if (selectedOption !=="Select Barge" && selectedOption) {
             var value = $('select[id=bargeDropdown] option:selected').val();
             window.location.href = "/Home/IndexPage?BargeName=" + value;
         } else {

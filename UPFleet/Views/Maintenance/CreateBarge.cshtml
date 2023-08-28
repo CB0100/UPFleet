@@ -1,6 +1,6 @@
 ﻿@model UPFleet.Models.Barge
 @{
-    ViewData["Title"] = "Add/Update Barge";
+    ViewData["Title"] = "Add Barge";
 }
 <div class="container-fluid">
     <div class="row">
@@ -9,10 +9,9 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h3 class="text-center text-primary">Add/Update Barge</h3>
+                    <h3 class="text-center text-primary">Add Barges</h3>
                 </div>
-                <form method="post" asp-action="BargeUpdate" asp-controller="Maintenance" id="formid">
-                    <input type="hidden" asp-for="ID" />
+                <form method="post" asp-action="CreateBarge" asp-controller="Maintenance" id="formid">
                     <div class="card-body">
                         <div class="form-group">
                             <label asp-for="Barge_Name">Barge Name</label>
@@ -26,12 +25,12 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="Rate">Rate ($)</label>
-                            <input type="text" class="form-control" asp-for="Rate" style="text-align:right;" id="rate" />
+                            <input type="text" class="form-control" asp-for="Rate" style="text-align:right;" id="rate" value="0" />
                             <span asp-validation-for="Rate" id="errate" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <label asp-for="Owner"></label>
-                            <select asp-for="Owner" asp-items="@(new SelectList(ViewBag.message, "OwnerName", "OwnerName", Model.Owner))" id="owner" class="form-control"></select>
+                            <select asp-for="Owner" asp-items="@(new SelectList(ViewBag.message, "OwnerName", "OwnerName"))" id="owner" class="form-control"></select>
                             <span asp-validation-for="Owner" id="erowner" class="text-danger"></span>
                         </div>
                         <div class="form-group">
@@ -39,16 +38,9 @@
                             <input type="text" class="form-control" asp-for="Description" id="description" />
                             <span asp-validation-for="Description" id="erdescription" class="text-danger"></span>
                         </div>
-                        <div class="form-group"style="display: flex;align-items: center;justify-content: space-between;">
-                            <div class="m-1 col-md-4">
-                                <a href="@Url.Action("BargeUpdate", "Maintenance", new { id = ((Model.ID)-1) })"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
-                                <label>@Model.ID</label>/<label>@TempData["MaxID"]</label>
-                                <a href="@Url.Action("BargeUpdate", "Maintenance", new { id = ((Model.ID)+1) })"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
-                            </div>
-                            <div class="form-btn col-md-8">
-                                <input type="submit" class="btn btn-primary m-2" value="Submit" id="btnid" />
-                                <a href="@Url.Action("GoBack", "Maintenance")" class="btn btn-danger m-2 float-sm-end" style="width: 25% !important">Back</a>
-                            </div>
+                        <div class="form-group" style="display: flex;align-items: center;justify-content: space-between;">
+                            <input type="submit" class="btn btn-primary m-2" value="Submit" id="btnid" />
+                            <a href="@Url.Action("HomePage", "Home")" class="btn btn-danger m-2 float-sm-end" style="width: 25% !important">Back</a>
                         </div>
                     </div>
                 </form>
@@ -62,6 +54,6 @@
 @section Scripts{
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="~/js/jsbarge.js"></script>
+    <script src="~/js/jscreatebarge.js"></script>
 }
 

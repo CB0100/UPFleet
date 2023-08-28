@@ -84,10 +84,10 @@ $(document).ready(function () {
 			$('#transfersGrid,  #deleteButton,  #updateButton, #savetransfer').hide();
 
 			// Show the Add New Transaction button
-			$(this).show();
+			$(this).hide();
             $('#Cancelbtn').show();
 
-			$('#bargeDropdown').prop('disabled', false);
+            $('#bargeDropdown').prop('disabled', false);
 		});
 
 	function checkTranactioninputSelection() {
@@ -97,6 +97,7 @@ $(document).ready(function () {
 			$('#savetransfer').show();
 			$('#updateButton').show();
 			$('#deleteButton').show();
+			$('#addTransactionButton').show();
             $('#Cancelbtn').hide();
 
 			$('#bargeDropdown').prop('disabled', true);
@@ -125,25 +126,31 @@ $(document).ready(function () {
 
 	});
 
-	$('#deleteButton').click(function () {
-		// Get the input value
-		var inputValue = $('#transactionInput').val();
-		var barge = $('#bargeDropdown').val();
+    $('#deleteButton').click(function () {
+        // Get the input value
+        var inputValue = $('#transactionInput').val();
+        var barge = $('#bargeDropdown').val();
 
-		// Create an AJAX request
-		$.ajax({
-			url: '/Maintenance/Delete_transaction',
-			type: 'GET',
-			data: { transactionInput: inputValue },
-			success: function (response) {
-				alert('Data Deleted Successfully');
-				window.location.href = '/Home/IndexPage?BargeName=' + barge;
-			},
-			error: function () {
-				console.log('Error occurred while retrieving barge details.');
-			}
-		});
-	});
+        // Show a confirmation dialog
+        var confirmDelete = confirm('Are you sure you want to Delete This Transaction?');
+
+        if (confirmDelete) {
+            // Create an AJAX request
+            $.ajax({
+                url: '/Maintenance/Delete_transaction',
+                type: 'GET',
+                data: { transactionInput: inputValue },
+                success: function (response) {
+                    alert('Data Deleted Successfully');
+                    window.location.href = '/Home/IndexPage?BargeName=' + barge;
+                },
+                error: function () {
+                    console.log('Error occurred while retrieving barge details.');
+                }
+            });
+        }
+    });
+
 	$('#updateButton').click(function () {
 		// Get the input value
 		var inputValue = $('#transactionInput').val();
@@ -168,7 +175,7 @@ $(document).ready(function () {
 			});
 		}
 	});
-	$('#rateInput').keypress(function (e) {
+    $('#rateInput').keypress(function (e) {
         var key = e.key;
         var regex = /[0-9.]/;
 
@@ -187,7 +194,12 @@ $(document).ready(function () {
 
         // Allow only two digits after the decimal point
         if (decimalIndex !== -1 && currentValue.substring(decimalIndex + 1).length >= 2) {
-            e.preventDefault();
+            // Check if the cursor position is after the decimal point
+            var cursorPosition = e.target.selectionStart;
+            if (cursorPosition > decimalIndex) {
+                e.preventDefault();
+            }
         }
-	});
+    });
+
 });

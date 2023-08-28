@@ -10,11 +10,13 @@
         <div class="col-lg-5 col-md-6 col-sm-10">
             <div class="card main-content-card">
                 <div class="card-header text-capitalize bg-gradient card-header-text">
-                    <label>Barge Selection</label>
+                    <label>UPFleet Barge Selection</label>
+                    <a href="@Url.ActionLink("CreateBarge","Maintenance")" class="button btn btn-primary home-btn" style="max-width: 110px">Add Barge</a>
                 </div>
                 <div class="card-body">
-                    <div>
-                        <h3>UPFleet Barge Selection</h3>
+                    <div class="inline-block flex-corner">
+                        
+                       
                     </div>
                     <span>Filter By Owner</span>
                     <select id="ownerDropdown" class="form-control">
@@ -25,7 +27,7 @@
                         }
                     </select>
                     <span>Select a barge from the list</span> 
-                    <div class="form-group">
+                    <div class="form-group cus-icon">
                         <select id="bargeDropdown" class="form-control">
                             <!-- Barge options will be dynamically populated here -->
                         </select>

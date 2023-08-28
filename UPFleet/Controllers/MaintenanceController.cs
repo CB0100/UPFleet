@@ -80,6 +80,35 @@ namespace UPFleet.Controllers
 
             return Json(suggestions);
         }
+
+        public ActionResult CreateBarge()
+        {
+            var Ownerslist = _dbContext.Owners.OrderBy(m=>m.OwnerName).ToList();
+            ViewBag.message = Ownerslist;
+            return View();
+        }
+        [HttpPost]
+        public ActionResult CreateBarge(Barge? model)
+        {
+            if (model != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    Barge obj = new Barge()
+                    {
+                        Barge_Name = model.Barge_Name,
+                        Size = model.Size,
+                        Description = model.Description,
+                        Rate = model.Rate,
+                        Owner = model.Owner
+                    };
+                    _dbContext.Add(obj);
+                    _dbContext.SaveChanges();
+                    return RedirectToAction("IndexPage", "Home", new { BargeName = model.Barge_Name });
+                }
+            }
+            return View();
+        }
         public IActionResult BargeUpdate(int Id)
         {
             var minid = _dbContext.Barges.Min(m => m.ID);
@@ -88,7 +117,7 @@ namespace UPFleet.Controllers
             TempData["MaxID"] = maxid;
             Id = (Id > maxid) ? maxid : Id;
             var obj = _dbContext.Barges.FirstOrDefault(m => m.ID == Id);
-            var Ownerslist = _dbContext.Owners.ToList();
+            var Ownerslist = _dbContext.Owners.OrderBy(m => m.OwnerName).ToList();
             ViewBag.message = Ownerslist;
             return View(obj);
         }

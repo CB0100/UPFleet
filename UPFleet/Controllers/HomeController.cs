@@ -24,12 +24,14 @@ namespace UPFleet.Controllers
         {
             if (owner == "All")
             {
-                var barges = _dbContext.Barges.OrderBy(m => m.Barge_Name).ToList(); ;
+                var barges = _dbContext.Barges.OrderBy(m => m.Barge_Name).ToList(); 
+                barges.Insert(0,new Barge{Barge_Name = "Select Barge"});
                 return Json(barges);
             }
             else
             {
-                var barges = _dbContext.Barges.Where(m => m.Owner == owner).OrderBy(m => m.Barge_Name).ToList(); ;
+                var barges = _dbContext.Barges.Where(m => m.Owner == owner).OrderBy(m => m.Barge_Name).ToList();
+                barges.Insert(0, new Barge { Barge_Name = "Select Barge" });
                 return Json(barges);
             }
 
