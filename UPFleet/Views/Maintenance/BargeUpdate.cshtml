@@ -29,9 +29,9 @@
                             <input type="text" class="form-control" asp-for="Rate" style="text-align:right;" id="rate" />
                             <span asp-validation-for="Rate" id="errate" class="text-danger"></span>
                         </div>
-                        <div class="form-group form-select">
+                        <div class="form-group ">
                             <label asp-for="Owner"></label>
-                            <select asp-for="Owner" asp-items="@(new SelectList(ViewBag.message, "OwnerName", "OwnerName", Model.Owner))" id="owner" class="form-control"></select>
+                            <select asp-for="Owner" asp-items="@(new SelectList(ViewBag.message, "OwnerName", "OwnerName", Model.Owner))" id="owner" class="form-control form-select"></select>
                             <span asp-validation-for="Owner" id="erowner" class="text-danger"></span>
                         </div>
                         <div class="form-group">
