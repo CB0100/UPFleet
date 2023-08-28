@@ -16,11 +16,11 @@
 }
 
 .card-body > span {
-    font-weight: 500;
+    font-weight: bold;
     font-size: 18px;
 }
 
-.card-body select {
+.home-select {
     margin-bottom: 20px;
 }
 .pb {
@@ -334,6 +334,7 @@
  }
  .form-group label {
      white-space: nowrap;
+     font-weight: bold;
  }
  .inline-block.flex-corner {
      display: flex;
