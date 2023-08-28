@@ -54,7 +54,7 @@
                             <div class="col-sm-2">
                                 <div class="form-group">
                                     <label>Barge</label>
-                                    <select id="bargeDropdown" class="form-control" disabled="true">
+                                    <select id="bargeDropdown" class="form-control form-select" disabled="true">
                                         @foreach (var barge in ViewBag.BargeList)
                                         {
                                             <option value="@barge.Barge_Name" selected="@(barge.Barge_Name == Model.Barge?.Barge_Name)">@barge.Barge_Name</option>
@@ -65,7 +65,7 @@
                             <div class="col-sm-2">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <select id="statusDropdown" class="form-control">
+                                    <select id="statusDropdown" class="form-control form-select">
                                         <option value="In" selected="@(Model?.Transaction?.Status == "In")">In</option>
                                         <option value="Out" selected="@(Model?.Transaction?.Status == "Out")">Out</option>
                                         <option value="Last switched" selected="@(Model?.Transaction?.Status == "Last switched")">Last switched</option>
@@ -150,7 +150,7 @@
                                                             <input name="transferlist[@i].Transfer.To" type="datetime-local" class="form-control" value="@Model.TransferList[i].To?.ToString("yyyy-MM-ddTHH:mm")" />
                                                         </td>
                                                         <td>
-                                                            <select id="statusDropdown_2" name="transferlist[@i].Transfer.Status" class="form-control">
+                                                            <select id="statusDropdown_2" name="transferlist[@i].Transfer.Status" class="form-control form-select">
                                                                 <option value="In" selected="@(Model.TransferList[i].Status == "In")">In</option>
                                                                 <option value="Out" selected="@(Model.TransferList[i].Status == "Out")">Out</option>
                                                                 <option value="Last switched" selected="@(Model.TransferList[i].Status == "Last switched")">Last switched</option>
@@ -184,8 +184,8 @@
                                                         <input name="transferlist[0].Transfer.To" type="datetime-local" class="form-control" />
                                                     </td>
                                                     <td>
-                                                        <select id="statusDropdown_2" name="transferlist[0].Transfer.Status" class="form-control">
-                                                            <option value="In">In</option>
+                                                        <select id="statusDropdown_2" name="transferlist[0].Transfer.Status" class="form-control form-select">
+                                                            <option value="In">In</option> 
                                                             <option value="Out">Out</option>
                                                             <option value="Last switched">Last switched</option>
                                                             <option value="To Bill">To Bill</option>

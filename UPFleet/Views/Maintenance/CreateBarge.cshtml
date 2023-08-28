@@ -30,7 +30,7 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="Owner"></label>
-                            <select asp-for="Owner" asp-items="@(new SelectList(ViewBag.message, "OwnerName", "OwnerName"))" id="owner" class="form-control"></select>
+                            <select asp-for="Owner" asp-items="@(new SelectList(ViewBag.message, "OwnerName", "OwnerName"))" id="owner" class="form-control form-select"></select>
                             <span asp-validation-for="Owner" id="erowner" class="text-danger"></span>
                         </div>
                         <div class="form-group">

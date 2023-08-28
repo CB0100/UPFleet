@@ -349,14 +349,6 @@
  th {
      vertical-align: middle;
  }
-.cus-icon
-{
-    position: relative;
-}
-    .cus-icon:before {
-        content: "\f0a9";
-        font-family: "Font Awesome 5 Free";
-    }
 /* Media Query */
 @media(max-width: 991px) {
     .d-flex-block a {
