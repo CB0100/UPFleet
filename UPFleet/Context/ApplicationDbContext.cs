@@ -12,9 +12,10 @@ namespace UPFleet.Data
         {
         }
         public DbSet<Barge> Barges { get; set; }
-        public DbSet<Owner?> Owners { get; set; }
+        public DbSet<Owner> Owners { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<Location> Locations { get; set; }
         public DbSet<PeachtreeExportedArchive> peachtreeExportedArchives { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

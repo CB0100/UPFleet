@@ -1,51 +1,74 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using UPFleet.Data;
+using UPFleet.Models;
+using UPFleet.Repositories;
 using UPFleet.ViewModels;
 
 namespace UPFleet.Controllers
 {
     public class ReportsController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IRepository _repository;
 
-        public ReportsController(ApplicationDbContext context)
+        public ReportsController(IRepository repository)
         {
-            _dbContext = context;
+            _repository = repository;
         }
 
         //show owner table data 
         public IActionResult Owner_reports()
         {
-            var obj = _dbContext.Owners.ToList();
+            var obj = _repository.GetOwnerList();
             return View(obj);
         }
+
         public IActionResult Barge_By_Owner()
         {
-            var obj = _dbContext.Barges.ToList();
-
-            return View(obj);
+            return View();
         }
 
+        public IActionResult Owner_list()
+        {
+            var obj = _repository.GetOwnerList().Where(m => _repository.GetBargeList().Any(b => b.Owner == m.OwnerName)).OrderBy(m => m.OwnerName).ToList();
+            obj.Insert(0, new Owner { OwnerName = "All" });
+            return Json(obj);
+        }
+        public IActionResult BargeByOwner(string SelectOwner)
+        {
+            if (SelectOwner == "All")
+            {
+                var obj = _repository.GetBargeList().OrderBy(m => m.Barge_Name).ToList();
 
+                return Json(obj);
+            }
+            else
+            {
+                var obj = _repository.GetBargeList().Where(m => m.Owner == SelectOwner).OrderBy(m => m.Barge_Name).ToList();
+
+                return Json(obj);
+            }
+
+        }
         public IActionResult View_Exported_Archive()
         {
-            var obj = _dbContext.peachtreeExportedArchives.ToList();
+            var obj = _repository.GetPeachtreeExportedArchiveList();
             return View(obj);
         }
 
         //transfer detail table view
         public IActionResult Transfer_Details()
         {
-            var Bargelist = _dbContext.Barges.ToList();
-            var Ownerlist = _dbContext.Owners.ToList();
-            var transferlist = _dbContext.Transfers.ToList();
-            var transactionlist = _dbContext.Transactions.ToList();
+            var Bargelist = _repository.GetBargeList();
+            var Ownerlist = _repository.GetOwnerList();
+            var transferlist = _repository.GetTransferList();
+            var transactionlist = _repository.GetTransactionList();
             var obj = (
                 from tr in transferlist
                 join t in transactionlist on tr.Transaction equals t.TransactionNo
                 join b in Bargelist on t.Barge equals b.Barge_Name
                 join o in Ownerlist on b.Owner equals o.OwnerName
-                where tr.To > new DateTime(2023, 1, 1) && tr.Status!="Billed" && !string.IsNullOrEmpty(tr.Status)
+                where tr.To > new DateTime(2023, 1, 1) && tr.Status != "Billed" && !string.IsNullOrEmpty(tr.Status)
                 select new HoursInFleetViewModel
                 {
                     GetBarge = b,
@@ -58,9 +81,9 @@ namespace UPFleet.Controllers
         }
         public IActionResult TransferSummary()
         {
-            var bargeslist = _dbContext.Barges.ToList();
-            var transactionslist = _dbContext.Transactions.Where(m => m.Status != "Billed").ToList();
-            var transferlist = _dbContext.Transfers.Where(m => m.Status != "Billed" && (m.From != null || m.To != null)).ToList();
+            var bargeslist = _repository.GetBargeList();
+            var transactionslist = _repository.GetTransactionList().Where(m => m.Status != "Billed").ToList();
+            var transferlist = _repository.GetTransferList().Where(m => m.Status != "Billed" && (m.From != null || m.To != null)).ToList();
 
             var viewmodelobj = (from tr in transactionslist
                                 join b in bargeslist on tr.Barge equals b.Barge_Name
@@ -77,9 +100,9 @@ namespace UPFleet.Controllers
 
         public IActionResult PreviewToExport_Page()
         {
-            var bargeslist = _dbContext.Barges.ToList();
-            var transactionslist = _dbContext.Transactions.ToList();
-            var transferlist = _dbContext.Transfers.Where(m => m.Status == "To Bill" && (m.From != null || m.To != null)).ToList();
+            var bargeslist = _repository.GetBargeList();
+            var transactionslist = _repository.GetTransactionList().ToList();
+            var transferlist = _repository.GetTransferList().Where(m => m.Status == "To Bill" && (m.From != null || m.To != null)).ToList();
 
             var viewmodelobj = (
                 from tr in transactionslist
@@ -98,15 +121,15 @@ namespace UPFleet.Controllers
 
         public IActionResult Not_Billed_TransferSummary_reportpage()
         {
-            var bargeslist = _dbContext.Barges.ToList();
-            var ownerlist = _dbContext.Owners.ToList();
-            var transactionslist = _dbContext.Transactions.Where(m =>
-                    m.Status != "Billed" && !string.IsNullOrEmpty(m.Status) && _dbContext.Transfers.Any(t =>
+            var bargeslist = _repository.GetBargeList();
+            var ownerlist = _repository.GetOwnerList();
+            var transactionslist = _repository.GetTransactionList().Where(m =>
+                    m.Status != "Billed" && !string.IsNullOrEmpty(m.Status) && _repository.GetTransferList().Any(t =>
                         t.Transaction != null && t.Transaction == m.TransactionNo && t.Status != "Billed" &&
                         !string.IsNullOrEmpty(t.Status)))
                 .ToList();
 
-            var transferlist = _dbContext.Transfers
+            var transferlist = _repository.GetTransferList()
             .Where(m => m.Status != "Billed" &&
                         !string.IsNullOrEmpty(m.Status) &&
                         (m.From != null || m.To != null))
@@ -140,20 +163,20 @@ namespace UPFleet.Controllers
 
         public IActionResult Billed_TransferSummary_reportpage()
         {
-            var bargeslist = _dbContext.Barges.ToList();
-            var ownerlist = _dbContext.Owners.ToList();
-            var transactionslist = _dbContext.Transactions.Where(m =>
+            var bargeslist = _repository.GetBargeList();
+            var ownerlist = _repository.GetOwnerList();
+            var transactionslist = _repository.GetTransactionList().Where(m =>
                     m.Status == "Billed" &&
-                    _dbContext.Transfers.Any(t => t.Transaction != null && t.Transaction == m.TransactionNo && t.Status == "Billed"))
+                    _repository.GetTransferList().Any(t => t.Transaction != null && t.Transaction == m.TransactionNo && t.Status == "Billed"))
                 .ToList();
 
-            var transferlist = _dbContext.Transfers.Where(m => m.Status == "Billed" && (m.From != null || m.To != null)).ToList();
+            var transferlist = _repository.GetTransferList().Where(m => m.Status == "Billed" && (m.From != null || m.To != null)).ToList();
 
 
             var Viewmodelobj = (
                 from o in ownerlist
                 join b in bargeslist on o.OwnerName equals b.Owner into ownerBarges
-                where o != null && ownerBarges.Any() && ownerBarges.Any(b => transactionslist.Any(t => t.Barge == b.Barge_Name && _dbContext.Transfers.Any(m => m.Transaction == t.TransactionNo)))
+                where o != null && ownerBarges.Any() && ownerBarges.Any(b => transactionslist.Any(t => t.Barge == b.Barge_Name && _repository.GetTransferList().Any(m => m.Transaction == t.TransactionNo)))
                 orderby o.OwnerName
                 select new UPFleetViewModel
                 {

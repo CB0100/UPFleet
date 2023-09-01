@@ -11,6 +11,13 @@
         Okbutton();
     });
 
+    $(document).keypress(function (event) {
+        if (event.which === 13 && $(':focus').length > 0) { // Check if Enter key is pressed and something is in focus
+            event.preventDefault(); // Prevent default behavior of the Enter key
+            Okbutton(); // Simulate a click on the OK button
+        }
+    });
+
     function loadBarges() {
         var selectedOwner = $('#ownerDropdown').val();
 

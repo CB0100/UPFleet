@@ -128,6 +128,8 @@
                                     <table id="dynamicTable" class="table table-striped">
                                         <thead>
                                             <tr>
+                                                <th class="w-10">From Location</th>
+                                                <th class="w-10">To Location</th>
                                                 <th class="w-10">From Date</th>
                                                 <th class="w-10">To Date</th>
                                                 <th>Status</th>
@@ -143,6 +145,22 @@
                                                 for (int i = 0; i < Model.TransferList.Count; i++)
                                                 {
                                                     <tr>
+                                                        <td>
+                                                            <select id="Fromlocationdropdown" name="transferlist[@i].Transfer.LocationFrom" class="form-control form-select">
+                                                                @foreach (var items in ViewBag.location)
+                                                                {
+                                                                    <option value="@items.Id" selected="@(Model.TransferList[i].LocationFrom==items.Id)">@items.LocationName</option>
+                                                                }
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select id="Tolocationdropdown" name="transferlist[@i].Transfer.LocationTo" class="form-control form-select">
+                                                                @foreach (var items in ViewBag.location)
+                                                                {
+                                                                    <option value="@items.Id" selected="@(Model.TransferList[i].LocationTo==items.Id)">@items.LocationName</option>
+                                                                }
+                                                            </select>
+                                                        </td>
                                                         <td>
                                                             <input name="transferlist[@i].Transfer.From" type="datetime-local" class="form-control" value="@Model.TransferList[i].From?.ToString("yyyy-MM-ddTHH:mm")" />
                                                         </td>
@@ -178,6 +196,22 @@
                                             {
                                                 <tr>
                                                     <td>
+                                                        <select as id="Fromlocationdropdown" name="transferlist[0].Transfer.LocationFrom" class="form-control form-select">
+                                                            @foreach (var items in ViewBag.location)
+                                                            {
+                                                                <option value="@items.Id">@items.LocationName</option>
+                                                            }
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <select as id="Tolocationdropdown" name="transferlist[0].Transfer.LocationTo" class="form-control form-select">
+                                                            @foreach (var items in ViewBag.location)
+                                                            {
+                                                                <option value="@items.Id">@items.LocationName</option>
+                                                            }
+                                                        </select>
+                                                    </td>
+                                                    <td>
                                                         <input name="transferlist[0].Transfer.From" type="datetime-local" class="form-control" />
                                                     </td>
                                                     <td>
@@ -185,7 +219,7 @@
                                                     </td>
                                                     <td>
                                                         <select id="statusDropdown_2" name="transferlist[0].Transfer.Status" class="form-control form-select">
-                                                            <option value="In">In</option> 
+                                                            <option value="In">In</option>
                                                             <option value="Out">Out</option>
                                                             <option value="Last switched">Last switched</option>
                                                             <option value="To Bill">To Bill</option>

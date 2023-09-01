@@ -9,7 +9,7 @@ namespace UPFleet.ViewModels
         public Transaction? Transaction { get; set; }
         public Transfer? Transfer { get; set; }
         public List<Transaction>? Transactionslist { get; init; }
-        public List<Transfer?>? TransferList { get; set; }
+        public List<Transfer> TransferList { get; set; }
         public List<Owner?>? OwnerList { get; set; }
         public List<Barge?>? BargeList { get; set; }
     }

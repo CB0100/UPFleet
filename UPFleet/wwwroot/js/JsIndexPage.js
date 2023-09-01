@@ -6,6 +6,8 @@ $(document).ready(function () {
 	var firstBargeOption = $('#bargeDropdown').find("option").eq(0);
 	var firstStatusOption = $('#statusDropdown').find("option").eq(0);
 	var StatusOption2 = $('#statusDropdown_2').find("option").eq(0);
+	var FromLocationOption = $('#Fromlocationdropdown').find("option").eq(0);
+	var ToLocationOption = $('#Tolocationdropdown').find("option").eq(0);
 
 
 	checkTranactioninputSelection();
@@ -78,8 +80,9 @@ $(document).ready(function () {
 			// Clear input fields in the first row
 			$('#dynamicTable tbody tr:first').find('input, select').val('');
 
-
 			StatusOption2.prop('selected', true);
+			FromLocationOption.prop('selected', true);
+			ToLocationOption.prop('selected', true);
 			// Hide the partial view and buttons
 			$('#transfersGrid,  #deleteButton,  #updateButton, #savetransfer').hide();
 
@@ -180,7 +183,9 @@ $(document).ready(function () {
         var regex = /[0-9.]/;
 
         var currentValue = e.target.value;
-        var decimalIndex = currentValue.indexOf('.');
+		var decimalIndex = currentValue.indexOf('.');
+		var currentValuelength = currentValue.length;   
+		
 
         // Allow only digits and a single decimal point
         if (!regex.test(key)) {
@@ -199,7 +204,10 @@ $(document).ready(function () {
             if (cursorPosition > decimalIndex) {
                 e.preventDefault();
             }
-        }
+		}
+		if (currentValuelength === 0 && key === '.') {
+			e.preventDefault();
+		}
     });
 
 });

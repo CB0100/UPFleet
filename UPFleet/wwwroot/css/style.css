@@ -1,16 +1,19 @@
 ﻿
- body {
+body {
     box-sizing: border-box;
 }
- .header-wrapper {
+
+.header-wrapper {
     height: 105px;
     display: flex;
     background: rgb(0 0 0 / 50%);
 }
- .content-wrapper {
+
+.content-wrapper {
     margin-bottom: 50px;
     margin-top: 50px;
 }
+
 .card-header.text-capitalize.bg-gradient.card-header-text label {
     font-size: 20px;
 }
@@ -23,8 +26,13 @@
 .home-select {
     margin-bottom: 20px;
 }
+
 .pb {
     padding: 1.7rem 0 !important;
+}
+
+th.w-10 {
+    white-space: nowrap;
 }
 
 .footer {
@@ -37,50 +45,62 @@
     color: #5f5f5f !important;
     font-weight: 500;
 }
- .main-content-area-wrapper.row {
+
+.main-content-area-wrapper.row {
     justify-content: center;
 }
- .card-header-text {
+
+.card-header-text {
     background: #8c8bdd;
     color: #ffffff;
 }
- .overlay {
+
+.overlay {
     background: url(/image/v2.jpg);
     background-position: center;
     background-size: cover;
 }
- nav.navbar.navbar-expand-sm.navbar-toggleable-sm.navbar-light.bg-white.box-shadow.mb-3 {
+
+nav.navbar.navbar-expand-sm.navbar-toggleable-sm.navbar-light.bg-white.box-shadow.mb-3 {
     background: none !important;
 }
- a.navbar-brand {
+
+a.navbar-brand {
     color: #ffffff !importaNT;
     letter-spacing: 3px;
     font-weight: 500;
     font-size: 30px;
 }
- .btn-primary {
+
+.btn-primary {
     color: #fff;
     background-color: #0b5ed7;
     border-color: #0d6efd;
     width: 100%;
 }
- .col-md-2.sidebar {
+
+.col-md-2.sidebar {
     padding-top: 40px;
     background: #5e627b;
 }
- .navigation a {
+
+.navigation a {
     color: #ffffff;
 }
- .form-group a {
+
+.form-group a {
     margin: 5px;
 }
- .navigation a:hover {
+
+.navigation a:hover {
     color: #ffac13;
 }
- a.nav-link.active {
+
+a.nav-link.active {
     color: #ffac13;
 }
- table#dynamicTableTransfergrid td a {
+
+table#dynamicTableTransfergrid td a {
     color: #fff;
     background: #ffa602;
     PADDING: 5px 15px;
@@ -88,18 +108,22 @@
     text-decoration: none;
     font-weight: 400s;
 }
- .d-inline-block a {
+
+.d-inline-block a {
     border: none;
     padding: 0px !important;
 }
- .Btn-grp {
+
+.Btn-grp {
     display: flex;
     align-items: flex-end;
 }
- .d-inline-block a:hover {
+
+.d-inline-block a:hover {
     background: none;
-}  
- #dynamicTableTransfergrid a.Button {
+}
+
+#dynamicTableTransfergrid a.Button {
     width: 125px !important;
     display: block;
     text-align: center;
@@ -107,88 +131,110 @@
     margin: auto;
     background-color: #0b5ed7
 }
-  .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
     background-color: #13afe4;
     color: #fff;
 }
- table#dynamicTableTransfergrid thead tr, td {
+
+table#dynamicTableTransfergrid thead tr, td {
     text-align: center;
 }
- .add-barges a {
+
+.add-barges a {
     color: #fff;
     border: none;
     width: 150px;
 }
- .report-btn {
+
+.report-btn {
     text-align: center;
 }
- .report-btn-primary {
+
+.report-btn-primary {
     background: #0b5ed7;
     color: #fff;
 }
-     .report-btn-primary:hover {
+
+    .report-btn-primary:hover {
         background: #07c8dc;
         color: #fff;
     }
- .report-btn-success {
+
+.report-btn-success {
     background: #32a700;
     color: #fff;
 }
- .btn.report-btn-success:hover {
+
+.btn.report-btn-success:hover {
     background: #036903;
     color: #fff !important;
 }
- a.btn.transfer-btn-success.mt-2 {
+
+a.btn.transfer-btn-success.mt-2 {
     background: #32a700;
     color: #fff;
     padding: 24px 0px !important;
 }
-     a.btn.transfer-btn-success.mt-2:hover {
+
+    a.btn.transfer-btn-success.mt-2:hover {
         background: #036903;
         color: #fff !important;
     }
- a.btn.transfer-btn-primary.mt-2 {
+
+a.btn.transfer-btn-primary.mt-2 {
     background: #0b5ed7;
     padding: 24px 0 !important;
     color: #fff;
 }
-     a.btn.transfer-btn-primary.mt-2:hover {
+
+    a.btn.transfer-btn-primary.mt-2:hover {
         background: #07c8dc;
         color: #fff;
     }
- .form-group.transfer-btn {
+
+.form-group.transfer-btn {
     text-align: center;
 }
- .form-group a {
+
+.form-group a {
     margin: 5px;
     font-size: 16px;
     width: 100%;
 }
- .btn-primary:hover {
+
+.btn-primary:hover {
     background: #07c8dc;
     color: #fff;
 }
- .report-btn-primary {
+
+.report-btn-primary {
     padding: 24px 0px;
 }
- .report-btn-warning {
+
+.report-btn-warning {
     padding: 24px 0px;
 }
- .report-btn-success {
+
+.report-btn-success {
     padding: 24px 0px;
 }
- .transfer-btn-success {
+
+.transfer-btn-success {
     padding: 24px 0px;
 }
- .d-flex-block {
+
+.d-flex-block {
     display: flex;
     justify-content: center;
 }
-     .d-flex-block a {
+
+    .d-flex-block a {
         padding: 0 8px !important;
         margin: 0 !important;
     }
- button#prevPage {
+
+button#prevPage {
     display: block;
     line-height: 1;
     height: 38px;
@@ -196,7 +242,8 @@
     margin-right: 5px;
     border-radius: 3px;
 }
- button#nextPage {
+
+button#nextPage {
     display: block;
     line-height: 1;
     height: 38px;
@@ -204,167 +251,232 @@
     margin-left: 5px;
     border-radius: 3px;
 }
- .pagination-container {
+
+.pagination-container {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
     justify-content: center;
 }
- tbody td {
+
+tbody td {
     text-align: left;
 }
- ul.pagination span {
+
+ul.pagination span {
     display: block;
     padding: 0 8px;
 }
- tbody td {
+
+tbody td {
     text-align: center;
 }
- table tr {
+
+table tr {
     text-align: center;
 }
- tbody td {
+
+tbody td {
     text-align: left;
 }
- table.table.table-bordered tr {
+
+table.table.table-bordered tr {
     text-align: left;
 }
- table#printTable tr {
+
+table#printTable tr {
     text-align: left;
 }
- h4.Owner-data span {
+
+h4.Owner-data span {
     margin: 0px 20px 0 0px;
 }
- .Owner-data {
+
+.Owner-data {
     margin: 30px 0;
 }
- .transactions-data h5 span {
+
+.transactions-data h5 span {
     margin-left: 8px;
 }
- button#prntbtn {
+
+button#prntbtn {
     margin-left: 1.5rem;
 }
- .function-btn {
+
+.function-btn {
     display: flex;
     align-items: center;
     width: 140px;
     margin-bottom: 15px;
 }
- a#prntbtn img {
+
+a#prntbtn img {
     max-width: 25px;
 }
- .function-btn a {
+
+.function-btn a {
     text-align: center;
     text-decoration: none;
     border-radius: 3px;
     padding: 2px 17px;
     cursor: pointer;
 }
- a#prntbtn {
+
+a#prntbtn {
     margin: 0 10px;
 }
- button#backbtn {
+
+button#backbtn {
     border: none;
     background: #0b5ed7;
     color: #fff;
     padding: 5px 20px;
     border-radius: 4px;
 }
- .transactions-data h5 {
+
+.transactions-data h5 {
     max-width: 155px;
     display: block;
     display: flex !important;
     justify-content: space-between;
 }
- .float-sm-end {
+
+.float-sm-end {
     width: 110px !important;
 }
- input#btnid {
+
+input#btnid {
     width: 90px;
 }
- div#transfersGrid {
+
+div#transfersGrid {
     padding: 20px 0;
     border: solid 1px #c6c6c6;
     margin-bottom: 20px;
     border-radius: 6px;
 }
- form#transferForm {
+
+form#transferForm {
     margin-top: 20px;
 }
- .border-1 {
+
+.border-1 {
     border: solid 1px #c6c6c6 !important;
     padding: 10px 0px;
     border-radius: 6px;
 }
- button#savetransfer:hover {
+
+button#savetransfer:hover {
     background: green;
 }
- button#savetransfer {
+
+button#savetransfer {
     background: #0b5ed7;
     border: none;
     color: #fff;
 }
- .card-action-control > td {
+
+.card-action-control > td {
     padding: 10px 0 !important;
 }
- button.btn.btn-primary.home-btn:hover {
+
+button.btn.btn-primary.home-btn:hover {
     background-color: #5f5dc6;
     border: none;
 }
- .home-btn {
-     background-color: #8c8bdd;
-     border: none;
-     max-width: 150px;
- }
- table.table.table-bordered th {
-     padding: 5px;
-     white-space: nowrap;
- }
- .transactions-data span {
-     white-space: nowrap;
- }
- .row.transactions-head {
-     margin: 15px 0;
- }
- .transactions-data h5 {
-     white-space: nowrap;
- }
- table#printTable th {
-     white-space: nowrap;
- }
- .form-group label {
-     white-space: nowrap;
-     font-weight: bold;
- }
- .inline-block.flex-corner {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
- }
- .card-header h3 {
-     color: #fff !important;
-     font-weight: 400;
-     margin: 0;
- }
- .card-header {
-     background: #0b5ed7;
- }
- .form-btn.col-md-8 {
-     display: flex;
-     justify-content: end;
- }
- .card-header-text {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
- }
- .home-btn:hover {
-     background-color: #5f5dc6;
-     border: none;
- }
- th {
-     vertical-align: middle;
- }
+
+.home-btn {
+    background-color: #8c8bdd;
+    border: none;
+    max-width: 150px;
+}
+
+table.table.table-bordered th {
+    padding: 5px;
+    white-space: nowrap;
+}
+
+.transactions-data span {
+    white-space: nowrap;
+}
+
+.row.transactions-head {
+    margin: 15px 0;
+}
+
+.transactions-data h5 {
+    white-space: nowrap;
+}
+
+table#printTable th {
+    white-space: nowrap;
+}
+
+.form-group label {
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.inline-block.flex-corner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    color: #fff !important;
+    font-weight: 400;
+    margin: 0;
+}
+
+.card-header {
+    background: #0b5ed7;
+}
+
+.form-btn.col-md-8 {
+    display: flex;
+    justify-content: end;
+}
+
+.card-header-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.home-btn:hover {
+    background-color: #5f5dc6;
+    border: none;
+}
+
+th {
+    vertical-align: middle;
+}
+
+#loader-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.popup-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /*background-color: black;*/
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+
 /* Media Query */
 @media(max-width: 991px) {
     .d-flex-block a {
@@ -372,41 +484,47 @@
     }
 }
 
- @media(max-width: 767px) {
+@media(max-width: 767px) {
     .d-flex-block a {
-        padding: 0px 3px!important;
+        padding: 0px 3px !important;
     }
-     .btn-outline img {
-         max-width: 25px;
-     }
- }
 
- @media(max-width: 567px) {
-     .p-4 {padding:0px!important 
-     }
-     main.pb-3 h4 {
+    .btn-outline img {
+        max-width: 25px;
+    }
+}
+
+@media(max-width: 567px) {
+    .p-4 {
+        padding: 0px !important
+    }
+
+    main.pb-3 h4 {
         font-size: 18px;
     }
-     div#printTable {
-         padding: 0;
-     }
-     
- }
- @media(max-width: 467px) {
-     .transactions-data h5 {
-         text-align: center;
-         font-size: 14px
-     }
-     #backbtn {
-         margin-left: 0px!important
-     }
- }
- 
- @media(max-width: 367px) {
+
+    div#printTable {
+        padding: 0;
+    }
 }
- @media print {
+
+@media(max-width: 467px) {
+    .transactions-data h5 {
+        text-align: center;
+        font-size: 14px
+    }
+
+    #backbtn {
+        margin-left: 0px !important
+    }
+}
+
+@media(max-width: 367px) {
+}
+
+@media print {
     .table-striped {
         width: 100%;
-        font-size:10px
+        font-size: 10px
     }
- }
+}

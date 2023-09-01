@@ -48,6 +48,9 @@
                             <div class="form-btn col-md-8">
                                 <input type="submit" class="btn btn-primary m-2" value="Submit" id="btnid" />
                                 <a href="@Url.Action("GoBack", "Maintenance")" class="btn btn-danger m-2 float-sm-end" style="width: 25% !important">Back</a>
+                                <button class="btn btn-success m-2" id="exportBtn">Export</button>
+                               <button id="importBtn" class="btn btn-success m-2">Import</button>
+
                             </div>
                         </div>
                     </div>
@@ -56,10 +59,16 @@
         </div>
         <div class="col-sm-4"></div>
     </div>
+    <div id="loader-overlay" style="display:none;">
+        <div id="loader" class="popup-loader">
+            <img src="/image/cargando.gif" style="max-width: 20%;min-width:20%" />
+        </div>
+    </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 @section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="~/js/jsbarge.js"></script>

@@ -15,6 +15,10 @@ namespace UPFleet.Models
         public string? FromIns { get; set; } 
         public double? DaysIn { get; set; }
         public string? InsuranceDays { get; set; }
+        public int? LocationFrom { get; set; } = 0;
+        public int? LocationTo { get; set; } = 0;
+
+
         
     }
 }

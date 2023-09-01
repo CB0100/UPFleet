@@ -1,28 +1,33 @@
 ﻿using System.Globalization;
+using System.Net.Mime;
+using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Mvc;
+using OfficeOpenXml;
 using UPFleet.Data;
 using UPFleet.Models;
+using UPFleet.Repositories;
 using UPFleet.ViewModels;
 
 namespace UPFleet.Controllers
 {
     public class MaintenanceController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
-        public MaintenanceController(ApplicationDbContext context)
+        private readonly IRepository _repository;
+
+        public MaintenanceController(IRepository repository)
         {
-            this._dbContext = context;
+            _repository = repository;
         }
 
         public IActionResult OwnerUpdate(int Id)
         {
-            int minid = _dbContext.Owners.Min(m => m.ID);
-            int maxid = _dbContext.Owners.Max(m => m.ID);
+            int minid = _repository.GetOwnerList().Min(m => m.ID);
+            int maxid = _repository.GetOwnerList().Max(m => m.ID);
             Id = (Id < minid) ? minid : Id;
             Id = (Id > maxid) ? maxid : Id;
             Owner? obj = new Owner();
-            obj = _dbContext.Owners.FirstOrDefault(m => m.ID == Id);
-            TempData["data"] = _dbContext.Owners.Max(m => m.ID);
+            obj = _repository.GetOwnerList().FirstOrDefault(m => m.ID == Id);
+            TempData["data"] = _repository.GetOwnerList().Max(m => m.ID);
             if (obj != null)
             {
                 return View(obj);
@@ -38,13 +43,13 @@ namespace UPFleet.Controllers
         {
             if (ModelState.IsValid)
             {
-                var data = _dbContext.Owners.FirstOrDefault(m => m.ID == model.ID && m.OwnerName == model.OwnerName);
-                if (data != null)
+                if(_repository.GetOwnerList().Any(m => m.ID == model.ID && m.OwnerName == model.OwnerName))
                 {
-                    data.OwnerName = model.OwnerName;
-                    data.Company = model.Company;
-                    data.Account = model.Account;
-                    _dbContext.SaveChanges();
+                    var result = _repository.UpdateOwner(model);
+                    if (!result)
+                    {
+                        throw new Exception("Internal Issue Found. Try Again after some time.");
+                    }
                     return RedirectToAction("OwnerUpdate", new { Id = model.ID });
                 }
                 else
@@ -55,9 +60,12 @@ namespace UPFleet.Controllers
                         Company = model.Company,
                         Account = model.Account
                     };
-                    _dbContext.Add(obj);
-                    _dbContext.SaveChanges();
-                    int maxid = _dbContext.Owners.Max(m => m.ID);
+                    var result = _repository.AddOwner(obj);
+                    if (!result)
+                    {
+                        throw new Exception("Internal Issue Found. Try Again after some time.");
+                    }
+                    int maxid = _repository.GetOwnerList().Max(m => m.ID);
                     return RedirectToAction("OwnerUpdate", new { Id = maxid });
                 }
             }
@@ -66,24 +74,24 @@ namespace UPFleet.Controllers
 
         public ActionResult AutocompleteBarge(string term)
         {
-            List<string> suggestions = new List<string>();
+            List<string?> suggestions = new List<string?>();
 
-                suggestions = _dbContext.Barges.Where(b => b.Barge_Name.Contains(term)).Select(b => b.Barge_Name).ToList();
+            suggestions = _repository.GetBargeList().Where(b => b.Barge_Name.Contains(term)).Select(b => b.Barge_Name).ToList();
 
             return Json(suggestions);
         }
         public ActionResult AutocompleteOwner(string term)
         {
-            List<string> suggestions = new List<string>();
+            List<string?> suggestions = new List<string?>();
 
-                suggestions = _dbContext.Owners.Where(b => b.OwnerName.Contains(term)).Select(b => b.OwnerName).ToList();
+            suggestions = _repository.GetOwnerList().Where(b => b.OwnerName.Contains(term)).Select(b => b?.OwnerName).ToList();
 
             return Json(suggestions);
         }
 
         public ActionResult CreateBarge()
         {
-            var Ownerslist = _dbContext.Owners.OrderBy(m=>m.OwnerName).ToList();
+            var Ownerslist = _repository.GetOwnerList().OrderBy(m => m?.OwnerName).ToList();
             ViewBag.message = Ownerslist;
             return View();
         }
@@ -102,22 +110,181 @@ namespace UPFleet.Controllers
                         Rate = model.Rate,
                         Owner = model.Owner
                     };
-                    _dbContext.Add(obj);
-                    _dbContext.SaveChanges();
+                    var result=_repository.AddBarge(obj);
+                    if (!result)
+                    {
+                        throw new Exception("Internal Issue Found. Try Again after some time.");
+                    }
                     return RedirectToAction("IndexPage", "Home", new { BargeName = model.Barge_Name });
                 }
             }
             return View();
         }
+
+        public ActionResult ExportBargesToExcel()
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            // Retrieve all Barge data from your data source (e.g., database)
+            List<Barge> barges = _repository.GetBargeList().OrderBy(m => m.Barge_Name).ToList();
+
+            // Create an Excel package using EPPlus
+            using (var package = new ExcelPackage())
+            {
+                var worksheet = package.Workbook.Worksheets.Add("Barges");
+
+                var headers = typeof(Barge).GetProperties();
+                for (int col = 1; col <= headers.Length-1; col++)
+                {
+                    worksheet.Cells[1, col].Value = headers[col].Name;
+                }
+
+                // Add data
+                for (int row = 2; row <= barges.Count + 1; row++)
+                {
+                    for (int col = 1; col <= headers.Length-1; col++)
+                    {
+                        worksheet.Cells[row, col].Value = headers[col].GetValue(barges[row - 2]);
+                    }
+                }
+                // Save the Excel package to a stream
+                using (var memoryStream = new MemoryStream())
+                {
+                    package.SaveAs(memoryStream);
+                    var excelBytes = memoryStream.ToArray();
+
+                    // Set response headers
+                    var contentDisposition = new ContentDisposition
+                    {
+                        FileName = "Barges.xlsx",
+                        Inline = false
+                    };
+
+                    Response.Headers.Add("Content-Disposition", contentDisposition.ToString());
+                    Response.Headers.Add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+
+                    // Return the Excel bytes as a FileContentResult
+                    return new FileContentResult(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    {
+                        FileDownloadName = "Barges.xlsx"
+                    };
+                }
+            }
+        }
+        [HttpPost]
+        public ActionResult CheckDuplicateBarge(IFormFile excelFile)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            try
+            {
+                // Use a library like EPPlus or ClosedXML to read the Excel file
+                using (var package = new ExcelPackage(excelFile.OpenReadStream()))
+                {
+                    var worksheet = package.Workbook.Worksheets[0];
+                    var bargeNames = worksheet.Cells[2, 1, worksheet.Dimension.Rows, 1]
+                                         .Select(cell => cell.Value?.ToString())
+                                         .Where(name => !string.IsNullOrEmpty(name))
+                                         .ToList();
+
+                    var duplicates = bargeNames
+                    .Where(name => _repository.GetBargeList().Any(b => b.Barge_Name == name))
+                    .ToList();
+                    var totalnewbargescount = bargeNames.Count()- duplicates.Count();
+                    if (duplicates.Count > 0)
+                    {
+                        return Json(new { isDuplicate = true, message = "Duplicate barge names found: " + string.Join(", ", duplicates), totalduplicatebarge = duplicates.Count(), totalnewbarges = totalnewbargescount });
+                    }
+                    else
+                    {
+                        return Json(new { isDuplicate = false });
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred during duplicate check.");
+            }
+        }
+
+
+        [HttpPost]
+        public ActionResult ImportBargesFromExcel(IFormFile excelFile)
+        {
+            // Validate the uploaded file
+            if (excelFile == null || excelFile.Length <= 0)
+            {
+                return BadRequest("No file uploaded.");
+            }
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            try
+            {
+                using (var stream = excelFile.OpenReadStream())
+                {
+                    // Use a library like EPPlus or ClosedXML to read the Excel file
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        var worksheet = package.Workbook.Worksheets[0];
+
+                        // Assuming the data starts from row 2 (header in row 1)
+                        for (int row = 2; row <= worksheet.Dimension.Rows; row++)
+                        {
+                            var bargeName = worksheet.Cells[row, 1].Value?.ToString();
+
+                            // Check if a barge with the same name already exists
+                            if (_repository.GetBargeList().Any(b => b.Barge_Name == bargeName))
+                            {
+                                // Show an alert or handle the duplicate case here
+                                // Example: Return a message indicating the duplicate
+                                continue;
+                            }
+
+                            // Extract other properties as before
+                            var size = worksheet.Cells[row, 2].Value?.ToString();
+                            var rateValue = worksheet.Cells[row, 3].Value;
+                            if (!double.TryParse(rateValue?.ToString(), out double rate))
+                            {
+                                // Handle incorrect data type for rate column
+                                return BadRequest($"Invalid data type for Rate in row {row}: Expected numeric value.");
+                            }
+                            var owner = worksheet.Cells[row, 4].Value?.ToString();
+                            if (!_repository.GetOwnerList().Any(m => m?.OwnerName == owner))
+                            {
+                                return BadRequest($"{owner} is unknown Owner in row {row}.");
+                            }
+                            var description = worksheet.Cells[row, 5].Value?.ToString();
+
+                            // Perform database insert or update here
+                            // Example using Entity Framework:
+                            var barge = new Barge
+                            {
+                                Barge_Name = bargeName,
+                                Size = size,
+                                Rate = rate,
+                                Owner = owner,
+                                Description = description
+                            };
+                            var result = _repository.AddBarge(barge);
+                        }
+                        return Ok("Import successful.");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Handle exceptions, log errors, and return appropriate response
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred during import.");
+            }
+        }
+
+
         public IActionResult BargeUpdate(int Id)
         {
-            var minid = _dbContext.Barges.Min(m => m.ID);
-            var maxid = _dbContext.Barges.Max(m => m.ID);
+            var minid = _repository.GetBargeList().Min(m => m.ID);
+            var maxid = _repository.GetBargeList().Max(m => m.ID);
             Id = (Id < minid) ? minid : Id;
             TempData["MaxID"] = maxid;
             Id = (Id > maxid) ? maxid : Id;
-            var obj = _dbContext.Barges.FirstOrDefault(m => m.ID == Id);
-            var Ownerslist = _dbContext.Owners.OrderBy(m => m.OwnerName).ToList();
+            var obj = _repository.GetBargeList().FirstOrDefault(m => m.ID == Id);
+            var Ownerslist = _repository.GetOwnerList().OrderBy(m => m.OwnerName).ToList();
             ViewBag.message = Ownerslist;
             return View(obj);
         }
@@ -127,15 +294,14 @@ namespace UPFleet.Controllers
         {
             if (ModelState.IsValid)
             {
-                var data = _dbContext.Barges.FirstOrDefault(m => m.Barge_Name == model.Barge_Name);
+                var data = _repository.GetBargeList().FirstOrDefault(m => m.Barge_Name == model.Barge_Name);
                 if (data != null)
                 {
-                    data.Barge_Name = model.Barge_Name;
-                    data.Size = model.Size;
-                    data.Description = model.Description;
-                    data.Rate = model.Rate;
-                    data.Owner = model.Owner;
-                    _dbContext.SaveChanges();
+                    var result = _repository.UpdateBarge(model);
+                    if (!result)
+                    {
+                        throw new Exception("Internal Issue Found. Try Again after some time.");
+                    }
                     return RedirectToAction("BargeUpdate", new { Id = data.ID });
                 }
                 else
@@ -148,9 +314,12 @@ namespace UPFleet.Controllers
                         Rate = model.Rate,
                         Owner = model.Owner
                     };
-                    _dbContext.Add(obj);
-                    _dbContext.SaveChanges();
-                    int maxid = _dbContext.Barges.Max(m => m.ID);
+                    var result = _repository.AddBarge(obj);
+                    if (!result)
+                    {
+                        throw new Exception("Internal Issue Found. Try Again after some time.");
+                    }
+                    int maxid = _repository.GetBargeList().Max(m => m.ID);
                     return RedirectToAction("BargeUpdate", new { Id = maxid });
                 }
             }
@@ -162,14 +331,16 @@ namespace UPFleet.Controllers
         {
             var bargename = TempData["BargeName"]?.ToString();
             TempData.Keep("BargeName");
-            TempData.Keep("tranactionNo");        
+            TempData.Keep("tranactionNo");
 
-            return RedirectToAction("IndexPage", "Home", new { BargeName = bargename});
+            return RedirectToAction("IndexPage", "Home", new { BargeName = bargename });
         }
         public IActionResult SaveTransfers()
         {
             return View();
         }
+
+        //Saving a new/old transfers
         [HttpPost]
         public IActionResult SaveTransfers(List<UPFleetViewModel> transferlist)
         {
@@ -180,92 +351,44 @@ namespace UPFleet.Controllers
             {
                 if (transfer != null)
                 {
+                    //New Transfer..
                     if (transfer.Transfer?.ID == 0)
-                    {
-                        Transfer? data = new Transfer();
-                        if (transaction != null)
+                    {                        
+                        var result= _repository.AddTransfer(transfer.Transfer, transaction!);
+                        if (!result)
                         {
-                            if (double.TryParse(transaction.ToString(), out var doubleValue))
-                            {
-                                data.Transaction = doubleValue;
-                            }
+                            throw new Exception("Internal Issue Found. Try Again after some time.");
                         }
-                        else
-                        {
-                            data.Transaction = _dbContext.Transactions.Max(m => m.TransactionNo);
-                        }
-                        double maxTransfer = _dbContext.Transfers.Max(m => m.TransferNO);
-                        data.TransferNO = maxTransfer;
-                        data.From = transfer.Transfer.From;
-                        data.To = transfer.Transfer.To;
-                        data.Status = transfer.Transfer.Status;
-                        data.InsuranceDays = transfer.Transfer.InsuranceDays;
-                        data.FromIns = transfer.Transfer.FromIns;
-                        if (transfer.Transfer is { From: not null, To: not null })
-                        {
-                            TimeSpan duration = (TimeSpan)(transfer.Transfer.To - transfer.Transfer.From);
-                            data.DaysIn = (int)duration.TotalDays;
-                        }
-
-                        if (transfer.Transfer is { To: not null, FromIns: not null })
-                        {
-                            DateTime toDateTime = transfer.Transfer.To.Value;
-                            if (DateTime.TryParse(transfer.Transfer.FromIns, out var fromInsDateTime))
-                            {
-                                int insuranceDays = (int)(toDateTime - fromInsDateTime).TotalDays;
-                                data.InsuranceDays = insuranceDays.ToString();
-                            }
-                        }
-                        _dbContext.Transfers.Add(data);
-                        _dbContext.SaveChanges();
                     }
+                    //Updating Transfer..
                     else
                     {
-                        Transfer? data =
-                            _dbContext.Transfers.FirstOrDefault(m => m.ID == transfer.Transfer.ID);
-                        if (data != null)
+                        var result = _repository.UpdateTransfer(transfer.Transfer);
+                        if (!result)
                         {
-                            data.From = transfer.Transfer.From;
-                            data.To = transfer.Transfer.To;
-                            data.Status = transfer.Transfer.Status;
-                            data.DaysIn = transfer.Transfer.DaysIn;
-                            data.InsuranceDays = transfer.Transfer.InsuranceDays;
-                            data.FromIns = transfer.Transfer.FromIns;
-                            if (data is { From: not null, To: not null })
-                            {
-                                TimeSpan duration = (TimeSpan)(data.To - data.From);
-                                data.DaysIn = (int)duration.TotalDays;
-                            }
-
-                            if (data is { To: not null, FromIns: not null })
-                            {
-                                DateTime toDateTime = data.To.Value;
-                                if (DateTime.TryParse(data.FromIns, out var fromInsDateTime))
-                                {
-                                    int insuranceDays = (int)(toDateTime - fromInsDateTime).TotalDays;
-                                    data.InsuranceDays = insuranceDays.ToString();
-                                }
-                            }
-                            _dbContext.SaveChanges();
+                            throw new Exception("Internal Issue Found. Try Again after some time.");
                         }
+
                     }
                 }
             }
 
             return RedirectToAction("IndexPage", "Home", new { Transactionno = transaction });
         }
+
+        //Gettng Barge details and adding a new transaction by clicking on Add new Tranaction
         [HttpGet]
         public IActionResult GetBargeDetails(string barge, string status)
         {
-            var bargeDetails = _dbContext.Barges.FirstOrDefault(b => b.Barge_Name == barge);
+            var bargeDetails = _repository.GetBargeList().FirstOrDefault(b => b.Barge_Name == barge);
 
             if (bargeDetails == null)
             {
                 return NotFound();
             }
 
-            var count = _dbContext.Transactions.Count(m => m.Barge == barge&&_dbContext.Transfers.Any(tr=>tr.Transaction==m.TransactionNo));
-            var TransId = _dbContext.Transactions.Max(m => m.TransactionNo) + 1;
+            var count = _repository.GetTransactionList().Count(m => m.Barge == barge && _repository.GetTransferList().Any(tr => tr.Transaction == m.TransactionNo));
+            var TransId = _repository.GetTransactionList().Max(m => m.TransactionNo) + 1;
             var response = new
             {
                 Rate = bargeDetails.Rate,
@@ -282,21 +405,19 @@ namespace UPFleet.Controllers
                 Barge = barge,
                 Status = status
             };
-            _dbContext.Transactions.Add(data);
-            _dbContext.SaveChanges();
-            TempData["tranactionNo"] =TransId.ToString() ;
+            var result= _repository.AddTransaction(data);
+            TempData["tranactionNo"] = TransId.ToString();
             TempData["BargeName"] = barge;
             return Json(response);
         }
 
-
+        //Getting data of Barge/Owner for BargeUpdate/OwnerUpdate page after filling a Barge name or Owner Name..
         [HttpGet]
-        public IActionResult GetDetails(string barge = null, string owner = null)
+        public IActionResult GetDetails(string? barge = null, string? owner = null)
         {
-           
-           if(barge != null)
+            if (barge != null)
             {
-                var bargeDetails = _dbContext.Barges.FirstOrDefault(b => b.Barge_Name == barge);
+                var bargeDetails = _repository.GetBargeList().FirstOrDefault(b => b.Barge_Name == barge);
                 if (bargeDetails != null)
                 {
                     var response = new
@@ -306,9 +427,9 @@ namespace UPFleet.Controllers
                     return Json(response);
                 }
             }
-            else if (owner!=null)
+            else if (owner != null)
             {
-                var ownerdetails = _dbContext.Owners.FirstOrDefault(b => b.OwnerName == owner);
+                var ownerdetails = _repository.GetOwnerList().FirstOrDefault(b => b.OwnerName == owner);
                 if (ownerdetails != null)
                 {
                     var response = new
@@ -318,21 +439,16 @@ namespace UPFleet.Controllers
                     return Json(response);
                 }
             }
-           return Json(null);
+            return Json(null);
         }
 
-
-            [HttpGet]
-        public IActionResult Update_transaction(double transactionInput,string status, double Rate)
+        //Updating Transaction deatils on clicking Update transaction button..
+        [HttpGet]
+        public IActionResult Update_transaction(double transactionInput, string status, double Rate)
         {
-            var transaction = _dbContext.Transactions.FirstOrDefault(m => m.TransactionNo == transactionInput);
-            if (transaction != null)
-            {
-                transaction.Status = status;
-                transaction.Rate = Rate;
-                _dbContext.SaveChanges();
-            }
-            if (_dbContext.Transfers.Any(m => m.Transaction == transactionInput))
+
+            var result = _repository.UpdateTransaction(transactionInput, status, Rate);
+            if (_repository.GetTransferList().Any(m => m.Transaction == transactionInput))
             {
                 var response = new
                 {
@@ -350,23 +466,11 @@ namespace UPFleet.Controllers
             }
         }
 
-        //delete transfer
+        //Deleting a transaction and all transfer realated to that transaction... 
         [HttpGet]
         public ActionResult Delete_transaction(double transactionInput)
         {
-            var transaction =
-                _dbContext.Transactions.FirstOrDefault(t => Equals(t.TransactionNo, (double)(transactionInput)));
-            var transfers = _dbContext.Transfers.Where(m => m.Transaction == transactionInput).ToList();
-            if (transaction != null)
-            {
-                foreach (var transfer in transfers)
-                {
-                    _dbContext.Transfers.Remove(transfer);
-                }
-                _dbContext.Transactions.Remove(transaction);
-                _dbContext.SaveChanges();
-            }
-
+            var result = _repository.DeleteTransaction(transactionInput);
             var response = "Data saved Successfully.";
             return Json(response);
 
