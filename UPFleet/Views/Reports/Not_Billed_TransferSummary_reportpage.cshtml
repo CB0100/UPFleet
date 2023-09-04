@@ -72,11 +72,11 @@
                                                 <td>@transfer.From</td>
                                                 <td>@transfer.To</td>
                                                 <td>
-                                                    $@(transfer.DaysIn * tranaction.Rate)
+                                                    $@(transfer.DaysIn * tranaction.Rate ?? 0)
                                                 </td>
                                                 <td>@transfer.TransferNO</td>
                                                 <td>@transfer.Status</td>
-                                                <td>@transfer.DaysIn</td>
+                                                <td>@(transfer.DaysIn??0)</td>
                                             </tr>
                                         }
                                         <tr>
@@ -86,7 +86,7 @@
                                         </tr>
                                         <tr>
                                             <td colspan="2">Sum</td>
-                                            <td colspan="2">$@((int)(tranaction.Rate ?? 0) * item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn))
+                                            <td colspan="2">$@((tranaction.Rate ?? 0) * item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn))
                                             <td />
                                             <td colspan="2">@item.TransferList.Where(m => m.Transaction == tranaction.TransactionNo).Sum(t => t.DaysIn)</td>
                                         </tr>

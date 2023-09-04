@@ -4,12 +4,12 @@
 <head>
 </head>
 <body>
-<div class="function-btn">
-    <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
-    <a id="prntbtn" title="Print This Report">
-        <img src="../image/printing.png">
-    </a>
-</div>
+    <div class="function-btn">
+        <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
+        <a id="prntbtn" title="Print This Report">
+            <img src="../image/printing.png">
+        </a>
+    </div>
     <div class="table-responsive">
         <table class="table" id="printTable">
             <thead>
@@ -60,10 +60,10 @@
                                                 <td>@transfer.From</td>
                                                 <td>@transfer.To</td>
                                                 <td>
-                                                    $@(transfer.DaysIn * transferView.Barge.Rate)
+                                                    $@(transfer.DaysIn * transferView.Barge.Rate ?? 0)
                                                 </td>
                                                 <td colspan="3"></td>
-                                                <td>@transfer.DaysIn</td>
+                                                <td>@(transfer.DaysIn ?? 0)</td>
                                                 <td>@transfer.Status</td>
                                             </tr>
                                         }
@@ -76,7 +76,7 @@
             </tbody>
         </table>
     </div>
-       
+
 </body>
 </html>
 @{

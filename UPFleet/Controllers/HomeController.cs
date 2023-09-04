@@ -15,15 +15,14 @@ namespace UPFleet.Controllers
         }
         public IActionResult HomePage()
         {
-            List<Owner?> owners = _repository.GetOwnerList().Where(m => _repository.GetBargeList().Any(b => b.Owner == m.OwnerName)).OrderBy(m => m.OwnerName).ToList();
-            ViewBag.Ownerlist = owners;
+            ViewBag.Ownerlist = _repository.GetOwnerList().Where(m => _repository.GetBargeList().Any(b => string.Compare(b.Owner, m.OwnerName, StringComparison.Ordinal) == 0)).OrderBy(m => m.OwnerName).ToList();            
             return View();
         }
 
         //Getting Barges list after Selecting any Owner in Home Page Filtering..
         public IActionResult GetBargesByOwner(string owner)
         {
-            if (owner == "All")
+            if (string.Compare(owner, "All", StringComparison.Ordinal) == 0)
             {
                 var barges = _repository.GetBargeList().OrderBy(m => m.Barge_Name).ToList(); 
                 barges.Insert(0,new Barge{Barge_Name = "Select Barge"});
@@ -31,7 +30,7 @@ namespace UPFleet.Controllers
             }
             else
             {
-                var barges = _repository.GetBargeList().Where(m => m.Owner == owner).OrderBy(m => m.Barge_Name).ToList();
+                var barges = _repository.GetBargeList().Where(m => string.Compare(m.Owner, owner, StringComparison.Ordinal) == 0).OrderBy(m => m.Barge_Name).ToList();
                 barges.Insert(0, new Barge { Barge_Name = "Select Barge" });
                 return Json(barges);
             }

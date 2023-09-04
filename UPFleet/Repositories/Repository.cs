@@ -23,11 +23,26 @@ namespace UPFleet.Repositories
         }
         public List<Transfer> GetTransferList()
         {
-            return _dbcontext.Transfers.ToList();
+            return _dbcontext.Transfers.Where(m =>(m.From != null || m.To != null) && !string.IsNullOrEmpty(m.Status)).ToList();
         }
         public List<Transaction> GetTransactionList()
         {
-            return _dbcontext.Transactions.ToList();
+            return _dbcontext.Transactions.Where(m => _dbcontext.Transfers.Any(tr => tr.Transaction == m.TransactionNo)).ToList();
+        }
+        public List<Transaction> GetTransactionListforNotBilled()
+        {
+            return _dbcontext.Transactions.Where(m =>
+                    m.Status != "Billed" && !string.IsNullOrEmpty(m.Status) && _dbcontext.Transfers.Any(t =>
+                        t.Transaction != null && t.Transaction == m.TransactionNo && t.Status != "Billed" &&
+                        !string.IsNullOrEmpty(t.Status)))
+                .ToList();
+        }
+        public List<Transaction> GetTransactionListforBilled()
+        {
+            return _dbcontext.Transactions.Where(m =>
+                    m.Status == "Billed" &&
+                     _dbcontext.Transfers.Any(t => t.Transaction != null && t.Transaction == m.TransactionNo && t.Status == "Billed"))
+                .ToList();
         }
         public List<PeachtreeExportedArchive> GetPeachtreeExportedArchiveList()
         {
@@ -56,12 +71,15 @@ namespace UPFleet.Repositories
             try
             {
                 var data = GetBargeList().FirstOrDefault(m => m.Barge_Name == barge.Barge_Name);
-                data.Barge_Name = barge.Barge_Name;
-                data.Size = barge.Size;
-                data.Description = barge.Description;
-                data.Rate = barge.Rate;
-                data.Owner = barge.Owner;
-                _dbcontext.SaveChanges();
+                if (data != null)
+                {
+                    data.Barge_Name = barge.Barge_Name;
+                    data.Size = barge.Size;
+                    data.Description = barge.Description;
+                    data.Rate = barge.Rate;
+                    data.Owner = barge.Owner;
+                    _dbcontext.SaveChanges();
+                }
                 return true;
             }
             catch (Exception)
@@ -114,11 +132,11 @@ namespace UPFleet.Repositories
                 return false;
             }
         }
-        public bool AddTransfer(Transfer transfer,string transaction)
+        public bool AddTransfer(Transfer transfer, string transaction)
         {
             try
             {
-                Transfer? data = new Transfer();
+                Transfer? data = new();
                 if (transaction != null)
                 {
                     if (double.TryParse(transaction.ToString(), out var doubleValue))
@@ -167,17 +185,17 @@ namespace UPFleet.Repositories
         {
             try
             {
-                Transfer? data = GetTransferList().FirstOrDefault(m => m.ID == transfer.ID);
+                Transfer? data = GetTransferList().FirstOrDefault(m => m.ID == transfer?.ID);
                 if (data != null)
                 {
-                    data.LocationFrom = transfer.LocationFrom;
-                    data.LocationTo = transfer.LocationTo;
-                    data.From = transfer.From;
-                    data.To = transfer.To;
-                    data.Status = transfer.Status;
-                    data.DaysIn = transfer.DaysIn;
-                    data.InsuranceDays = transfer.InsuranceDays;
-                    data.FromIns = transfer.FromIns;
+                    data.LocationFrom = transfer?.LocationFrom;
+                    data.LocationTo = transfer?.LocationTo;
+                    data.From = transfer?.From;
+                    data.To = transfer?.To;
+                    data.Status = transfer?.Status;
+                    data.DaysIn = transfer?.DaysIn;
+                    data.InsuranceDays = transfer?.InsuranceDays;
+                    data.FromIns = transfer?.FromIns;
                     if (data is { From: not null, To: not null })
                     {
                         TimeSpan duration = (TimeSpan)(data.To - data.From);

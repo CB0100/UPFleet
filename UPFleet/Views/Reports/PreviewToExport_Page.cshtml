@@ -6,7 +6,7 @@
 <body>
 
     <div class="function-btn">
-         <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
+        <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
         <a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>
     </div>
     <table class="table" id="printTable">
@@ -28,14 +28,16 @@
                 @if (transferView.TransferList.Any())
                 {
                     <tr>
-                        <td>@transferView.Barge.Barge_Name</td>
-                        <td>@transferView.Barge.Owner</td>
-                        <td>$@((int)(transferView.Barge.Rate ?? 0) * transferView.TransferList.Sum(t => t.DaysIn))</td>
-                        <td>@transferView.Transaction.TransactionNo</td>
-                        <td>@transferView.Barge.Size</td>
-                        <td>$@transferView.Barge.Rate</td>
+                        <td>@(transferView.Transaction?.Barge ?? "N/A")</td>
+                        <td>@(transferView.Barge?.Owner ?? "N/A")</td>
+                        <td>
+                            $@((int)(transferView.Barge?.Rate ?? 0) * transferView.TransferList.Sum(t => t.DaysIn))
+                        </td>
+                        <td>@transferView.Transaction?.TransactionNo</td>
+                        <td>@(transferView.Barge?.Size ?? "N/A")</td>
+                        <td>$@(transferView.Barge?.Rate ?? 0)</td>
                         <td>@transferView.TransferList.Sum(t => t.DaysIn)</td>
-                        <td>@transferView.Transaction.Status</td>
+                        <td>@transferView.Transaction?.Status</td>
                     </tr>
                     <tr>
                         <td colspan="6">
@@ -57,14 +59,14 @@
                                             <td>@transfer.From</td>
                                             <td>@transfer.To</td>
                                             <td>
-                                                $@(transfer.DaysIn * transferView.Barge.Rate)
+                                                $@(transfer.DaysIn * (transferView.Barge?.Rate ?? 0))
                                             </td>
                                             <td colspan="3"></td>
-                                            <td>@transfer.DaysIn</td>
+                                            <td>@(transfer.DaysIn ?? 0)</td>
                                             <td>@transfer.Status</td>
                                         </tr>
                                     }
-                                    <p>Summary for Transaction# @transferView.Transaction.TransactionNo (@(transferView.TransferList.Count()) details Record)</p>
+                                    <p>Summary for Transaction# @transferView.Transaction?.TransactionNo (@(transferView.TransferList.Count()) details Record)</p>
                                 </tbody>
                             </table>
                         </td>

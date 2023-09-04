@@ -1,9 +1,6 @@
-﻿using System.Globalization;
-using System.Net.Mime;
-using System.Security.Cryptography.Xml;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
-using UPFleet.Data;
+using System.Net.Mime;
 using UPFleet.Models;
 using UPFleet.Repositories;
 using UPFleet.ViewModels;
@@ -43,7 +40,7 @@ namespace UPFleet.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(_repository.GetOwnerList().Any(m => m.ID == model.ID && m.OwnerName == model.OwnerName))
+                if (_repository.GetOwnerList().Any(m => m.ID == model.ID && m.OwnerName == model.OwnerName))
                 {
                     var result = _repository.UpdateOwner(model);
                     if (!result)
@@ -54,7 +51,7 @@ namespace UPFleet.Controllers
                 }
                 else
                 {
-                    Owner obj = new Owner()
+                    Owner obj = new()
                     {
                         OwnerName = model.OwnerName,
                         Company = model.Company,
@@ -74,17 +71,13 @@ namespace UPFleet.Controllers
 
         public ActionResult AutocompleteBarge(string term)
         {
-            List<string?> suggestions = new List<string?>();
-
-            suggestions = _repository.GetBargeList().Where(b => b.Barge_Name.Contains(term)).Select(b => b.Barge_Name).ToList();
+            List<string?> suggestions = _repository.GetBargeList().Where(b => b.Barge_Name!.Contains(term)).Select(b => b.Barge_Name).ToList();
 
             return Json(suggestions);
         }
         public ActionResult AutocompleteOwner(string term)
         {
-            List<string?> suggestions = new List<string?>();
-
-            suggestions = _repository.GetOwnerList().Where(b => b.OwnerName.Contains(term)).Select(b => b?.OwnerName).ToList();
+            List<string?> suggestions = _repository.GetOwnerList().Where(b => b.OwnerName!.Contains(term)).Select(b => b?.OwnerName).ToList();
 
             return Json(suggestions);
         }
@@ -102,7 +95,7 @@ namespace UPFleet.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    Barge obj = new Barge()
+                    Barge obj = new()
                     {
                         Barge_Name = model.Barge_Name,
                         Size = model.Size,
@@ -110,7 +103,7 @@ namespace UPFleet.Controllers
                         Rate = model.Rate,
                         Owner = model.Owner
                     };
-                    var result=_repository.AddBarge(obj);
+                    var result = _repository.AddBarge(obj);
                     if (!result)
                     {
                         throw new Exception("Internal Issue Found. Try Again after some time.");
@@ -125,7 +118,7 @@ namespace UPFleet.Controllers
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             // Retrieve all Barge data from your data source (e.g., database)
-            List<Barge> barges = _repository.GetBargeList().OrderBy(m => m.Barge_Name).ToList();
+            var barges = _repository.GetBargeList().OrderBy(m => m.Barge_Name).ToList();
 
             // Create an Excel package using EPPlus
             using (var package = new ExcelPackage())
@@ -133,7 +126,7 @@ namespace UPFleet.Controllers
                 var worksheet = package.Workbook.Worksheets.Add("Barges");
 
                 var headers = typeof(Barge).GetProperties();
-                for (int col = 1; col <= headers.Length-1; col++)
+                for (int col = 1; col <= headers.Length - 1; col++)
                 {
                     worksheet.Cells[1, col].Value = headers[col].Name;
                 }
@@ -141,7 +134,7 @@ namespace UPFleet.Controllers
                 // Add data
                 for (int row = 2; row <= barges.Count + 1; row++)
                 {
-                    for (int col = 1; col <= headers.Length-1; col++)
+                    for (int col = 1; col <= headers.Length - 1; col++)
                     {
                         worksheet.Cells[row, col].Value = headers[col].GetValue(barges[row - 2]);
                     }
@@ -188,7 +181,7 @@ namespace UPFleet.Controllers
                     var duplicates = bargeNames
                     .Where(name => _repository.GetBargeList().Any(b => b.Barge_Name == name))
                     .ToList();
-                    var totalnewbargescount = bargeNames.Count()- duplicates.Count();
+                    var totalnewbargescount = bargeNames.Count() - duplicates.Count();
                     if (duplicates.Count > 0)
                     {
                         return Json(new { isDuplicate = true, message = "Duplicate barge names found: " + string.Join(", ", duplicates), totalduplicatebarge = duplicates.Count(), totalnewbarges = totalnewbargescount });
@@ -306,7 +299,7 @@ namespace UPFleet.Controllers
                 }
                 else
                 {
-                    Barge obj = new Barge()
+                    Barge obj = new()
                     {
                         Barge_Name = model.Barge_Name,
                         Size = model.Size,
@@ -353,8 +346,8 @@ namespace UPFleet.Controllers
                 {
                     //New Transfer..
                     if (transfer.Transfer?.ID == 0)
-                    {                        
-                        var result= _repository.AddTransfer(transfer.Transfer, transaction!);
+                    {
+                        var result = _repository.AddTransfer(transfer.Transfer, transaction!);
                         if (!result)
                         {
                             throw new Exception("Internal Issue Found. Try Again after some time.");
@@ -398,14 +391,14 @@ namespace UPFleet.Controllers
             };
 
             // Save Transaction
-            Transaction data = new Transaction()
+            Transaction data = new()
             {
                 TransactionNo = TransId,
-                Rate = (double?)response.Rate,
+                Rate = response.Rate,
                 Barge = barge,
                 Status = status
             };
-            var result= _repository.AddTransaction(data);
+            var result = _repository.AddTransaction(data);
             TempData["tranactionNo"] = TransId.ToString();
             TempData["BargeName"] = barge;
             return Json(response);
