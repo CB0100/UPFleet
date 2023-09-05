@@ -170,7 +170,7 @@ namespace UPFleet.Controllers
                     var bargeslist = _repository.GetBargeList().Where(m => m.Owner == SelectOwner && _repository.GetTransactionList().Any(tr => tr.Barge == m.Barge_Name));
 
                     var viewmodelobj = (
-                        from tr in transactionslist.Where(m => m.Status == SelectStatus)
+                        from tr in transactionslist.Where(m=>m.Status== SelectStatus)
                         join b in bargeslist on tr.Barge equals b.Barge_Name
                         where (string.IsNullOrEmpty(SelectStatus) || tr.Status == SelectStatus) 
                         select new UPFleetViewModel()

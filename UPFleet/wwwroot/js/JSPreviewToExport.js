@@ -84,6 +84,7 @@
         const tableBody = $("#transactiontable-body");
         tableBody.empty(); // Clear existing rows
 
+        var i = 0;
         if (data.length > 0) {
             // Use the data in your code
             data.forEach(function (item) {
@@ -158,8 +159,12 @@
                     // Append the summary row to the table
                     tableBody.append(summaryRow);
                 }
+                else {
+                    i++;
+                }
             });
-        } else {
+        }
+        if (i === data.length) {
             Swal.fire(
                 'No Record Found',
                 '',
@@ -167,7 +172,7 @@
             );
             const summaryRow = $("<tr>");
             summaryRow.append($("<td>").attr("colspan", "8").text("No Record Found."));
-            tableBody.append(summaryRow );
+            tableBody.append(summaryRow);
         }
     }
 
