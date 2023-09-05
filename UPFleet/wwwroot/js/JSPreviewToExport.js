@@ -2,7 +2,7 @@
     const url = "/Reports/Owner_list/";
     var isfirst = true;
     LoadOwners();
-    LoadData("All");
+    LoadData("All", "Select Status");
 
     $("#prntbtn").click(function () {
         $(".function-btn").hide();
@@ -12,14 +12,24 @@
         $(".filterdiv").show();
     });
     $('#ownerDropdown').change(function () {
-        const SelectOwner = $('#ownerDropdown').val();
-        LoadData(SelectOwner);
-    });
-    $('#transStatusDropdown').change(function () {
-        const SelectOwner = $('#ownerDropdown').val();
-        LoadData(SelectOwner);
+        callajax();
     });
 
+    $('#transStatusDropdown').change(function () {
+        callajax();
+    });
+
+    $('#fromDate, #toDate').change(function () {
+        callajax();
+    });
+
+    function callajax() {
+        const SelectOwner = $('#ownerDropdown').val();
+        const SelectStatus = $('#transStatusDropdown').val();
+        const fromDate = $('#fromDate').val(); // Get selected fromDate
+        const toDate = $('#toDate').val();     // Get selected toDate
+        LoadData(SelectOwner, SelectStatus, fromDate, toDate);
+    }
     function LoadOwners() {
         const dropdownOwner = $('#ownerDropdown');
 
@@ -39,12 +49,17 @@
         });
     }
 
-    function LoadData(SelectOwner) {
+    function LoadData(SelectOwner, SelectStatus, fromDate, toDate) {
         const url = "/Reports/PreviewReport/";
 
         $.ajax({
             url,
-            data: { SelectOwner },
+            data: {
+                SelectOwner,
+                SelectStatus,
+                fromDate, // Add fromDate parameter
+                toDate    // Add toDate parameter
+            },
             method: "GET",
             beforeSend: function () {
                 $('#loader-overlay').show();  // Show loader before sending the request
@@ -75,24 +90,24 @@
                 const transaction = item.transaction;
                 const barge = item.barge;
                 const transferList = item.transferList || [];
-
-                // Create the transaction row
-                const transactionRow = $("<tr>");
-                transactionRow.append($("<td>").text(transaction?.barge || "N/A"));
-                transactionRow.append($("<td>").text(barge?.owner || "N/A"));
-                transactionRow.append($("<td>").text("$" + (barge?.rate || 0) * transferList.reduce((sum, t) => sum + t.daysIn, 0)));
-                transactionRow.append($("<td>").text(transaction?.transactionNo));
-                transactionRow.append($("<td>").text(barge?.size || "N/A"));
-                transactionRow.append($("<td>").text("$" + (barge?.rate || 0)));
-                transactionRow.append($("<td>").text(transferList.reduce((sum, t) => sum + t.daysIn, 0)));
-                transactionRow.append($("<td>").text(transaction?.status));
-
-                // Append more <td> elements for other columns
-
-                // Append the transaction row to the table
-                tableBody.append(transactionRow);
-
                 if (transferList.length > 0) {
+                    // Create the transaction row
+                    const transactionRow = $("<tr>");
+                    transactionRow.append($("<td>").text(transaction?.barge || "N/A"));
+                    transactionRow.append($("<td>").text(barge?.owner || "N/A"));
+                    transactionRow.append($("<td>").text("$" + (barge?.rate || 0) * transferList.reduce((sum, t) => sum + t.daysIn, 0)));
+                    transactionRow.append($("<td>").text(transaction?.transactionNo));
+                    transactionRow.append($("<td>").text(barge?.size || "N/A"));
+                    transactionRow.append($("<td>").text("$" + (barge?.rate || 0)));
+                    transactionRow.append($("<td>").text(transferList.reduce((sum, t) => sum + t.daysIn, 0)));
+                    transactionRow.append($("<td>").text(transaction?.status));
+
+                    // Append more <td> elements for other columns
+
+                    // Append the transaction row to the table
+                    tableBody.append(transactionRow);
+
+
                     const table = $("<table>").addClass("table table-bordered");
 
                     // Create the table header (thead) with column headers
@@ -150,9 +165,9 @@
                 '',
                 'warning'
             );
-            const transactionRow = $("<tr>");
-            transactionRow.append($("<td>").text("No Record Found."));
-            tableBody.append(transactionRow);
+            const summaryRow = $("<tr>");
+            summaryRow.append($("<td>").attr("colspan", "8").text("No Record Found."));
+            tableBody.append(summaryRow);
         }
     }
 
@@ -165,6 +180,6 @@
         const seconds = date.getSeconds().toString().padStart(2, '0');
         const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
 
-        return `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
+        return `${day}/${month}/${year} ${hours}:${minutes}:${seconds} ${ampm}`;
     }
 });

@@ -15,12 +15,18 @@
         </select>
         <span>Filter By Transaction Status</span>
         <select id="transStatusDropdown" style="width: 30%;" class="form-control form-select home-select">
+            <option value="Select Status">Select Status/None</option>
             <option value="In">In</option>
             <option value="Out">Out</option>
             <option value="Last switched">Last switched</option>
             <option value="To Bill">To Bill</option>
             <option value="Billed">Billed</option>
         </select>
+        <label for="fromDate">From Date:</label>
+        <input type="date" id="fromDate" name="fromDate">
+
+        <label for="toDate">To Date:</label>
+        <input type="date" id="toDate" name="toDate">
         <hr />
     </div>
     <table class="table" id="printTable">

@@ -102,46 +102,89 @@ namespace UPFleet.Controllers
         {
             return View();
 
-        }        
-        public JsonResult PreviewReport(string SelectOwner)
+        }
+        public JsonResult PreviewReport(string SelectOwner, string SelectStatus, string fromDate, string toDate)
         {
             var transactionslist = _repository.GetTransactionListforToBill();
             var transferlist = _repository.GetTransferList().Where(m => m.Status == "To Bill").ToList();
-            if (SelectOwner=="All")
+
+            if (SelectStatus == "Select Status")
             {
-                var bargeslist = _repository.GetBargeList();
+                if (SelectOwner == "All")
+                {
+                    var bargeslist = _repository.GetBargeList();
+                    var viewmodelobj = (
+                        from tr in transactionslist
+                        join b in bargeslist on tr.Barge equals b.Barge_Name into bargeGroup
+                        from b in bargeGroup.DefaultIfEmpty()
+                        select new UPFleetViewModel()
+                        {
+                            Barge = b,
+                            Transaction = tr,
+                            TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo && (string.IsNullOrEmpty(fromDate) || m.From >= DateTime.Parse(fromDate)) && (string.IsNullOrEmpty(toDate) || m.To <= DateTime.Parse(toDate))).ToList()
+                        }).ToList();
 
-                var viewmodelobj = (
-                    from tr in transactionslist
-                    join b in bargeslist on tr.Barge equals b.Barge_Name into bargeGroup
-                    from b in bargeGroup.DefaultIfEmpty()
-                    select new UPFleetViewModel()
-                    {
-                        Barge = b,
-                        Transaction = tr,
-                        TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo).ToList()
-                    }).ToList();
+                    return Json(viewmodelobj);
+                }
+                else
+                {
+                    // Filter by owner, date range
+                    var bargeslist = _repository.GetBargeList().Where(m => m.Owner == SelectOwner && _repository.GetTransactionList().Any(tr => tr.Barge == m.Barge_Name));
 
-                return Json(viewmodelobj);
+                    var viewmodelobj = (
+                        from tr in transactionslist
+                        join b in bargeslist on tr.Barge equals b.Barge_Name
+                        select new UPFleetViewModel()
+                        {
+                            Barge = b,
+                            Transaction = tr,
+                            TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo && (string.IsNullOrEmpty(fromDate) || m.From >= DateTime.Parse(fromDate)) && (string.IsNullOrEmpty(toDate) || m.To <= DateTime.Parse(toDate))).ToList()
+                        }).ToList();
+
+                    return Json(viewmodelobj);
+                }
             }
             else
             {
-                var bargeslist = _repository.GetBargeList().Where(m => m.Owner == SelectOwner && _repository.GetTransactionList().Any(tr => tr.Barge == m.Barge_Name));
+                if (SelectOwner == "All")
+                {
+                    var bargeslist = _repository.GetBargeList();
+                    // Filter by status and date range if SelectOwner is "All"
+                    var viewmodelobj = (
+                        from tr in transactionslist.Where(m=>m.Status== SelectStatus)
+                        join b in bargeslist on tr.Barge equals b.Barge_Name into bargeGroup
+                        from b in bargeGroup.DefaultIfEmpty()
+                        where (string.IsNullOrEmpty(SelectStatus) || tr.Status == SelectStatus) 
+                        select new UPFleetViewModel()
+                        {
+                            Barge = b,
+                            Transaction = tr,
+                            TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo && (string.IsNullOrEmpty(fromDate) || m.From >= DateTime.Parse(fromDate)) && (string.IsNullOrEmpty(toDate) || m.To <= DateTime.Parse(toDate))).ToList()
+                        }).ToList();
 
-                var viewmodelobj = (
-                    from tr in transactionslist
-                    join b in bargeslist on tr.Barge equals b.Barge_Name
-                    select new UPFleetViewModel()
-                    {
-                        Barge = b,
-                        Transaction = tr,
-                        TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo).ToList()
-                    }).ToList();
+                    return Json(viewmodelobj);
+                }
+                else
+                {
+                    // Filter by owner, status, and date range
+                    var bargeslist = _repository.GetBargeList().Where(m => m.Owner == SelectOwner && _repository.GetTransactionList().Any(tr => tr.Barge == m.Barge_Name));
 
-                return Json(viewmodelobj);
-            }            
+                    var viewmodelobj = (
+                        from tr in transactionslist.Where(m => m.Status == SelectStatus)
+                        join b in bargeslist on tr.Barge equals b.Barge_Name
+                        where (string.IsNullOrEmpty(SelectStatus) || tr.Status == SelectStatus) 
+                        select new UPFleetViewModel()
+                        {
+                            Barge = b,
+                            Transaction = tr,
+                            TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo && (string.IsNullOrEmpty(fromDate) || m.From >= DateTime.Parse(fromDate)) && (string.IsNullOrEmpty(toDate) || m.To <= DateTime.Parse(toDate))).ToList()
+                        }).ToList();
 
+                    return Json(viewmodelobj);
+                }
+            }
         }
+
 
         public IActionResult Not_Billed_TransferSummary_reportpage()
         {
