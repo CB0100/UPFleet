@@ -6,7 +6,11 @@ $(document).ready(function () {
             return false;
         }
         else {
-            alert("Data Saved Successfully");
+            Swal.fire(
+                'Saved',
+                'Data Saved Successfully',
+                'success'
+            );
         }
     });
 
@@ -137,15 +141,39 @@ $(document).ready(function () {
 
     function handleDuplicateBarges(response, formData) {
         if (response.totalnewbarges > 0) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    proceedWithImport(formData);
+                }
+                else {
+
+                }
+            })
             if (confirm("Total " + response.totalduplicatebarge + " Duplicate Barges Found. \n There are" + response.totalnewbarges + " New Barges in this file.\n\nDo you want to skip duplicate barges or cancel importing?")) {
                 // Skip the duplicate barge and continue
-                proceedWithImport(formData);
+                
             } else {
-                alert("Import process canceled.");
+                Swal.fire(
+                    'Cancelled',
+                    'Import process canceled.',
+                    'error'
+                );
             }
         }
         else {
-            alert('All Barges are already Stored. No New Barge Found in this Excel File.');            
+            Swal.fire(
+                'No Additional Barges',
+                'All Barges are already Stored. No New Barge Found in this Excel File.',
+                'warning'
+            );           
         }
     }
         
@@ -167,7 +195,11 @@ $(document).ready(function () {
             error: function (error) {
                 $('#loader-overlay').hide();
                 // Show an alert for other errors
-                alert("Error importing data: \n" + error.responseText);
+                Swal.fire(
+                    'Error importing data:',
+                    'Error importing data: \n' + error.responseText,
+                    'error'
+                ); 
             }
         });
     }

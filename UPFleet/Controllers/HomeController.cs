@@ -84,6 +84,7 @@ namespace UPFleet.Controllers
                 TempData["tranactionNo"] = Transactionno.ToString();
                 TempData.Keep("BargeName");
                 TempData.Keep("tranactionNo");
+                
                 if (_repository.GetTransferList().Any(m => m.Transaction == Transactionno && (m.From != null || m.To != null)))
                 {
                     var viewModel = new UPFleetViewModel

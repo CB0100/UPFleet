@@ -29,6 +29,10 @@ namespace UPFleet.Repositories
         {
             return _dbcontext.Transactions.Where(m => _dbcontext.Transfers.Any(tr => tr.Transaction == m.TransactionNo)).ToList();
         }
+        public double? GetTransactionCount()
+        {
+            return _dbcontext.Transactions.Max(m => m.TransactionNo);
+        }
         public List<Transaction> GetTransactionListforNotBilled()
         {
             return _dbcontext.Transactions.Where(m =>
@@ -42,6 +46,11 @@ namespace UPFleet.Repositories
             return _dbcontext.Transactions.Where(m =>
                     m.Status == "Billed" &&
                      _dbcontext.Transfers.Any(t => t.Transaction != null && t.Transaction == m.TransactionNo && t.Status == "Billed"))
+                .ToList();
+        }
+        public List<Transaction> GetTransactionListforToBill()
+        {
+            return _dbcontext.Transactions.Where(m =>  _dbcontext.Transfers.Any(t => t.Transaction != null && t.Transaction == m.TransactionNo && t.Status == "To Bill"))
                 .ToList();
         }
         public List<PeachtreeExportedArchive> GetPeachtreeExportedArchiveList()
@@ -172,7 +181,7 @@ namespace UPFleet.Repositories
                         data.InsuranceDays = insuranceDays.ToString();
                     }
                 }
-                _dbcontext.Transfers.Add(transfer);
+                _dbcontext.Transfers.Add(data);
                 _dbcontext.SaveChanges();
                 return true;
             }

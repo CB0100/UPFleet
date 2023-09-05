@@ -8,8 +8,10 @@ namespace UPFleet.Repositories
         public List<Owner> GetOwnerList();
         public List<Transfer> GetTransferList();
         public List<Transaction> GetTransactionList();
+        public double? GetTransactionCount();
         public List<Transaction> GetTransactionListforNotBilled();
         public List<Transaction> GetTransactionListforBilled();
+        public List<Transaction> GetTransactionListforToBill();
         public List<PeachtreeExportedArchive> GetPeachtreeExportedArchiveList();
         public List<Location> GetLocationList();
         public bool AddBarge(Barge barge);

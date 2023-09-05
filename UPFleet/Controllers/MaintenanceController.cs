@@ -325,6 +325,8 @@ namespace UPFleet.Controllers
             var bargename = TempData["BargeName"]?.ToString();
             TempData.Keep("BargeName");
             TempData.Keep("tranactionNo");
+            
+
 
             return RedirectToAction("IndexPage", "Home", new { BargeName = bargename });
         }
@@ -340,6 +342,7 @@ namespace UPFleet.Controllers
             var transaction = TempData["tranactionNo"]?.ToString();
             TempData.Keep("BargeName");
             TempData.Keep("tranactionNo");
+            
             foreach (var transfer in transferlist)
             {
                 if (transfer != null)
@@ -381,7 +384,7 @@ namespace UPFleet.Controllers
             }
 
             var count = _repository.GetTransactionList().Count(m => m.Barge == barge && _repository.GetTransferList().Any(tr => tr.Transaction == m.TransactionNo));
-            var TransId = _repository.GetTransactionList().Max(m => m.TransactionNo) + 1;
+            var TransId = _repository.GetTransactionCount()+1;
             var response = new
             {
                 Rate = bargeDetails.Rate,

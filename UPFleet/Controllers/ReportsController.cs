@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using UPFleet.Models;
 using UPFleet.Repositories;
 using UPFleet.ViewModels;
@@ -28,6 +29,7 @@ namespace UPFleet.Controllers
 
         public IActionResult Owner_list()
         {
+            var data = TempData["Datalist"] as string;
             var obj = _repository.GetOwnerList().Where(m => _repository.GetBargeList().Any(b => b.Owner == m.OwnerName)).OrderBy(m => m.OwnerName).ToList();
             obj.Insert(0, new Owner { OwnerName = "All" });
             return Json(obj);
@@ -98,23 +100,46 @@ namespace UPFleet.Controllers
 
         public IActionResult PreviewToExport_Page()
         {
-            var bargeslist = _repository.GetBargeList();
-            var transactionslist = _repository.GetTransactionList();
+            return View();
+
+        }        
+        public JsonResult PreviewReport(string SelectOwner)
+        {
+            var transactionslist = _repository.GetTransactionListforToBill();
             var transferlist = _repository.GetTransferList().Where(m => m.Status == "To Bill").ToList();
+            if (SelectOwner=="All")
+            {
+                var bargeslist = _repository.GetBargeList();
 
-            var viewmodelobj = (
-                from tr in transactionslist
-                join b in bargeslist on tr.Barge equals b.Barge_Name into bargeGroup
-                from b in bargeGroup.DefaultIfEmpty()
-                select new UPFleetViewModel()
-                {
-                    Barge = b,
-                    Transaction = tr,
-                    TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo).ToList()
-                }).ToList();
+                var viewmodelobj = (
+                    from tr in transactionslist
+                    join b in bargeslist on tr.Barge equals b.Barge_Name into bargeGroup
+                    from b in bargeGroup.DefaultIfEmpty()
+                    select new UPFleetViewModel()
+                    {
+                        Barge = b,
+                        Transaction = tr,
+                        TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo).ToList()
+                    }).ToList();
 
+                return Json(viewmodelobj);
+            }
+            else
+            {
+                var bargeslist = _repository.GetBargeList().Where(m => m.Owner == SelectOwner && _repository.GetTransactionList().Any(tr => tr.Barge == m.Barge_Name));
 
-            return View(viewmodelobj);
+                var viewmodelobj = (
+                    from tr in transactionslist
+                    join b in bargeslist on tr.Barge equals b.Barge_Name
+                    select new UPFleetViewModel()
+                    {
+                        Barge = b,
+                        Transaction = tr,
+                        TransferList = transferlist.Where(m => m.Transaction == tr.TransactionNo).ToList()
+                    }).ToList();
+
+                return Json(viewmodelobj);
+            }            
 
         }
 

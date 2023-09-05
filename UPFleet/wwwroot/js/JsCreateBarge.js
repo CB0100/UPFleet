@@ -4,7 +4,11 @@
             return false;
         }
         else {
-            alert("Data Saved Successfully");
+           Swal.fire(
+						'Saved',
+						'Data Saved Successfully',
+						'success'
+					);
         }
     });
 

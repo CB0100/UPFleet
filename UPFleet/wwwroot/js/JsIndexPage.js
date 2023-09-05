@@ -135,23 +135,34 @@ $(document).ready(function () {
         var barge = $('#bargeDropdown').val();
 
         // Show a confirmation dialog
-        var confirmDelete = confirm('Are you sure you want to Delete This Transaction?');
-
-        if (confirmDelete) {
-            // Create an AJAX request
-            $.ajax({
-                url: '/Maintenance/Delete_transaction',
-                type: 'GET',
-                data: { transactionInput: inputValue },
-                success: function (response) {
-                    alert('Data Deleted Successfully');
-                    window.location.href = '/Home/IndexPage?BargeName=' + barge;
-                },
-                error: function () {
-                    console.log('Error occurred while retrieving barge details.');
-                }
-            });
-        }
+		Swal.fire({
+			title: 'Are you sure you want to Delete This Transaction?',
+			text: "You won't be able to revert this!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, delete it!'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				Swal.fire(
+					'Deleted!',
+					'Your file has been deleted.',
+					'success'
+				);
+				$.ajax({
+					url: '/Maintenance/Delete_transaction',
+					type: 'GET',
+					data: { transactionInput: inputValue },
+					success: function (response) {
+						window.location.href = '/Home/IndexPage?BargeName=' + barge;
+					},
+					error: function () {
+						console.log('Error occurred while retrieving barge details.');
+					}
+				});
+			}
+		})           
     });
 
 	$('#updateButton').click(function () {
@@ -167,7 +178,11 @@ $(document).ready(function () {
 				type: 'GET',
 				data: { transactionInput: inputValue, status: status, Rate: rate },
 				success: function (response) {
-					alert('Data Saved Successsfully.');
+					Swal.fire(
+						'Saved',
+						'Data Saved Successfully',
+						'success'
+					);
 					if (response.currentTransactionType === 'Update') {
 						window.location.href = '/Home/IndexPage?Transactionno=' + inputValue;
 					}

@@ -1,4 +1,4 @@
-﻿@model List<UPFleet.ViewModels.UPFleetViewModel>
+﻿@model List<UPFleetViewModel>
 
 <html>
 <head>
@@ -8,6 +8,20 @@
     <div class="function-btn">
         <a href="@Url.Action("GoBack", "Maintenance")" id="backbtn" class="btn-primary">Back</a>
         <a id="prntbtn" title="Print This Report"><img src="../image/printing.png"></a>
+    </div>
+    <div class="filterdiv">
+        <span>Filter By Owner</span>
+        <select id="ownerDropdown" style="width: 30%;" class="form-control form-select home-select">
+        </select>
+        <span>Filter By Transaction Status</span>
+        <select id="transStatusDropdown" style="width: 30%;" class="form-control form-select home-select">
+            <option value="In">In</option>
+            <option value="Out">Out</option>
+            <option value="Last switched">Last switched</option>
+            <option value="To Bill">To Bill</option>
+            <option value="Billed">Billed</option>
+        </select>
+        <hr />
     </div>
     <table class="table" id="printTable">
         <thead>
@@ -22,71 +36,17 @@
                 <th>Status</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var transferView in Model)
-            {
-                @if (transferView.TransferList.Any())
-                {
-                    <tr>
-                        <td>@(transferView.Transaction?.Barge ?? "N/A")</td>
-                        <td>@(transferView.Barge?.Owner ?? "N/A")</td>
-                        <td>
-                            $@((int)(transferView.Barge?.Rate ?? 0) * transferView.TransferList.Sum(t => t.DaysIn))
-                        </td>
-                        <td>@transferView.Transaction?.TransactionNo</td>
-                        <td>@(transferView.Barge?.Size ?? "N/A")</td>
-                        <td>$@(transferView.Barge?.Rate ?? 0)</td>
-                        <td>@transferView.TransferList.Sum(t => t.DaysIn)</td>
-                        <td>@transferView.Transaction?.Status</td>
-                    </tr>
-                    <tr>
-                        <td colspan="6">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Cost</th>
-                                        <th colspan=""></th>
-                                        <th>Days In</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var transfer in transferView.TransferList)
-                                    {
-                                        <tr>
-                                            <td>@transfer.From</td>
-                                            <td>@transfer.To</td>
-                                            <td>
-                                                $@(transfer.DaysIn * (transferView.Barge?.Rate ?? 0))
-                                            </td>
-                                            <td colspan="3"></td>
-                                            <td>@(transfer.DaysIn ?? 0)</td>
-                                            <td>@transfer.Status</td>
-                                        </tr>
-                                    }
-                                    <p>Summary for Transaction# @transferView.Transaction?.TransactionNo (@(transferView.TransferList.Count()) details Record)</p>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                }
-            }
+        <tbody id="transactiontable-body">
+            
         </tbody>
     </table>
+    <div id="loader-overlay" style="display:none;">
+        <div id="loader" class="popup-loader">
+            <img src="/image/cargando.gif" style="max-width: 20%;min-width:20%" />
+        </div>
+    </div>
 </body>
 </html>
-@{
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $("#prntbtn").click(function () {
-                $(".function-btn").hide();
-                window.print();
-                $(".function-btn").show();
-            });
-        });
-    </script>
+@section Scripts{
+    <script src="~/js/jspreviewtoexport.js"></script>
 }

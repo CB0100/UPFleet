@@ -52,7 +52,7 @@
             var value = $('select[id=bargeDropdown] option:selected').val();
             window.location.href = "/Home/IndexPage?BargeName=" + value;
         } else {
-            alert("Please select a barge.");
+            Swal.fire("Please select a barge.");
         }
     }
 });
