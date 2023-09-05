@@ -167,7 +167,7 @@
             );
             const summaryRow = $("<tr>");
             summaryRow.append($("<td>").attr("colspan", "8").text("No Record Found."));
-            tableBody.append(summaryRow);
+            tableBody.append(summaryRow );
         }
     }
 
