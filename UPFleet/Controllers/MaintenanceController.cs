@@ -71,13 +71,15 @@ namespace UPFleet.Controllers
 
         public ActionResult AutocompleteBarge(string term)
         {
-            List<string?> suggestions = _repository.GetBargeList().Where(b => b.Barge_Name!.Contains(term)).Select(b => b.Barge_Name).ToList();
+            List<string?> suggestions = new List<string?>();
+            suggestions = _repository.GetBargeNameList(term);
 
             return Json(suggestions);
         }
         public ActionResult AutocompleteOwner(string term)
         {
-            List<string?> suggestions = _repository.GetOwnerList().Where(b => b.OwnerName!.Contains(term)).Select(b => b?.OwnerName).ToList();
+            List<string?> suggestions = new List<string?>();
+            suggestions = _repository.GetOwnerList().Where(b => b.OwnerName!.Contains(term)).Select(b => b?.OwnerName).ToList();
 
             return Json(suggestions);
         }
@@ -221,6 +223,11 @@ namespace UPFleet.Controllers
                         for (int row = 2; row <= worksheet.Dimension.Rows; row++)
                         {
                             var bargeName = worksheet.Cells[row, 1].Value?.ToString();
+                            if (string.IsNullOrWhiteSpace(bargeName) || bargeName == "")
+                            {
+                                // Handle balnk data type for barge column
+                                return BadRequest($"No Barge Name found in row {row}");
+                            }
 
                             // Check if a barge with the same name already exists
                             if (_repository.GetBargeList().Any(b => b.Barge_Name == bargeName))
@@ -325,7 +332,7 @@ namespace UPFleet.Controllers
             var bargename = TempData["BargeName"]?.ToString();
             TempData.Keep("BargeName");
             TempData.Keep("tranactionNo");
-            
+
 
 
             return RedirectToAction("IndexPage", "Home", new { BargeName = bargename });
@@ -342,7 +349,7 @@ namespace UPFleet.Controllers
             var transaction = TempData["tranactionNo"]?.ToString();
             TempData.Keep("BargeName");
             TempData.Keep("tranactionNo");
-            
+
             foreach (var transfer in transferlist)
             {
                 if (transfer != null)
@@ -384,7 +391,7 @@ namespace UPFleet.Controllers
             }
 
             var count = _repository.GetTransactionList().Count(m => m.Barge == barge && _repository.GetTransferList().Any(tr => tr.Transaction == m.TransactionNo));
-            var TransId = _repository.GetTransactionCount()+1;
+            var TransId = _repository.GetTransactionCount() + 1;
             var response = new
             {
                 Rate = bargeDetails.Rate,
@@ -413,7 +420,7 @@ namespace UPFleet.Controllers
         {
             if (barge != null)
             {
-                var bargeDetails = _repository.GetBargeList().FirstOrDefault(b => b.Barge_Name == barge);
+                var bargeDetails = _repository.GetBargeList().FirstOrDefault(b => b.Barge_Name?.ToLower() == barge.ToLower());
                 if (bargeDetails != null)
                 {
                     var response = new
@@ -425,7 +432,7 @@ namespace UPFleet.Controllers
             }
             else if (owner != null)
             {
-                var ownerdetails = _repository.GetOwnerList().FirstOrDefault(b => b.OwnerName == owner);
+                var ownerdetails = _repository.GetOwnerList().FirstOrDefault(b => b.OwnerName?.ToLower() == owner.ToLower());
                 if (ownerdetails != null)
                 {
                     var response = new

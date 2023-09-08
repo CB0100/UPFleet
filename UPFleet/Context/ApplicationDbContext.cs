@@ -5,7 +5,7 @@ using UPFleet.Models;
 
 namespace UPFleet.Data
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext : DbContext
     {
         //DB Context Class
         public ApplicationDbContext(DbContextOptions options) : base(options)

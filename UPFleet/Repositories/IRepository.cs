@@ -1,10 +1,12 @@
 ﻿using UPFleet.Models;
+using UPFleet.ViewModels;
 
 namespace UPFleet.Repositories
 {
     public interface IRepository
     {
         public List<Barge> GetBargeList();
+        public List<string?> GetBargeNameList(string term);
         public List<Owner> GetOwnerList();
         public List<Transfer> GetTransferList();
         public List<Transaction> GetTransactionList();
@@ -14,6 +16,7 @@ namespace UPFleet.Repositories
         public List<Transaction> GetTransactionListforToBill();
         public List<PeachtreeExportedArchive> GetPeachtreeExportedArchiveList();
         public List<Location> GetLocationList();
+        public List<UPFleetViewModel> GetStatusData(string Status);
         public bool AddBarge(Barge barge);
         public bool AddOwner(Owner owner);
         public bool AddTransaction(Transaction transaction);

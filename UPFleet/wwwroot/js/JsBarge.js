@@ -2,20 +2,45 @@
 $(document).ready(function () {
     $('#loader-overlay').hide();
     $('#btnid').click(function () {
-        if (!getValidation()) {
-            return false;
-        }
-        else {
+        var isBargeNameValid = validateBargeName();
+        var isSizeValid = validateSize();
+        var isRateValid = validateRate();
+        var isDescriptionValid = validateDescription();
+        var isOwnerValid = validateOwner();
+
+        if (isBargeNameValid && isSizeValid && isRateValid && isDescriptionValid && isOwnerValid) {
             Swal.fire(
                 'Saved',
                 'Data Saved Successfully',
                 'success'
             );
         }
+        else {
+            return false;
+        }
     });
 
-    $('#formid input').on('change', function () {
-        getValidation();
+    $('#Barge_Name').on('input', validateBargeName);
+    $('#description').on('input', validateDescription);
+    $('#size').on('input', validateSize);
+    $('#rate').on('input', validateRate);
+
+
+    $('#owner').on('change', function () {
+        validateOwner();
+    });
+
+    $('#size').keypress(function (e) {
+        blockSpecialCharacter(e);
+    });
+
+    $('#rate').keypress(function (e) {
+        blockSpecialNumber(e);
+    });
+
+    $("#Barge_Name").blur(function () {
+        var selectedValue = $("#Barge_Name").val();
+        filldata(selectedValue);
     });
 
     $("#Barge_Name").autocomplete({
@@ -32,38 +57,10 @@ $(document).ready(function () {
         select: function (event, ui) {
             // Handle the selected autocomplete suggestion
             var selectedValue = ui.item.value;
-
-            // Send the selected value to the MVC action using AJAX
-            $.ajax({
-                url: '/Maintenance/GetDetails',
-                type: 'GET',
-                data: { barge: selectedValue },
-                success: function (response) {
-                    if (response.bargeid != 0) {
-                        window.location.href = '/Maintenance/BargeUpdate/' + response.bargeid;
-                    }
-                },
-                error: function (error) {
-                    console.error("Error sending data: " + error);
-                }
-            });
+            filldata(selectedValue);            
         }
-    });
-    $('#owner').on('change', function () {
-        getValidation();
-    });
-
-    $('#size').keypress(function (e) {
-        blockSpecialCharacter(e);
-    });
-
-    $('#rate').keypress(function (e) {
-        blockSpecialNumber(e);
-    });
-
+    });   
     $("#rate").val(parseFloat($("#rate").val()).toFixed(2));
-
-
 
 
 
@@ -138,35 +135,47 @@ $(document).ready(function () {
             }
         });
     }
+    function filldata(selectedValue) {
+
+        // Send the selected value to the MVC action using AJAX
+        $.ajax({
+            url: '/Maintenance/GetDetails',
+            type: 'GET',
+            data: { barge: selectedValue },
+            success: function (response) {
+                if (response.bargeid != 0) {
+                    window.location.href = '/Maintenance/BargeUpdate/' + response.bargeid;
+                }
+            },
+            error: function (error) {
+                console.error("Error sending data: " + error);
+            }
+        });
+    }
 
     function handleDuplicateBarges(response, formData) {
         if (response.totalnewbarges > 0) {
             Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
+                title: response.totalnewbarges + ' New Barges in this file.\n' + response.totalduplicatebarge + ' Duplicate Barges Found.',
+                text: 'Do you want to skip duplicate barges and import or cancel importing?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+                confirmButtonText: 'Skip Duplicates and Import',
+                cancelButtonText: 'Cancel Importing'
             }).then((result) => {
                 if (result.isConfirmed) {
                     proceedWithImport(formData);
                 }
                 else {
-
+                    Swal.fire(
+                        'Cancelled',
+                        'Import process canceled.',
+                        'error'
+                    );
                 }
             })
-            if (confirm("Total " + response.totalduplicatebarge + " Duplicate Barges Found. \n There are" + response.totalnewbarges + " New Barges in this file.\n\nDo you want to skip duplicate barges or cancel importing?")) {
-                // Skip the duplicate barge and continue
-                
-            } else {
-                Swal.fire(
-                    'Cancelled',
-                    'Import process canceled.',
-                    'error'
-                );
-            }
         }
         else {
             Swal.fire(
@@ -197,7 +206,7 @@ $(document).ready(function () {
                 // Show an alert for other errors
                 Swal.fire(
                     'Error importing data:',
-                    'Error importing data: \n' + error.responseText,
+                    '\n' + error.responseText,
                     'error'
                 ); 
             }
@@ -205,40 +214,80 @@ $(document).ready(function () {
     }
 
 
-    function getValidation() {
-        var isValid = true;
+    function validateBargeName() {
+        var value = $('#Barge_Name').val();
+        var error = $('#erBarge_Name');
 
-        $('#erBarge_Name').text('');
-        $('#ersize').text('');
-        $('#errate').text('');
-        $('#erdescription').text('');
-        $('#erowner').text('');
+        if (value === '') {
+            error.text('Please enter a value.');
+            $('#Barge_Name').css('border-color', 'red');
+            $('#Barge_Name').focus();
+            return false;
+        } else if (value.length < 3) {
+            error.text('Must be at least 3 characters.');
+            return false;
+        } else {
+            error.text('');
+            $('#Barge_Name').css('border-color', 'lightgray');
+            return true;
+        }
+    }
 
-        var inputs = [
-            { selector: '#Barge_Name', errorSelector: '#erBarge_Name', minLength: 3 },
-            { selector: '#size', errorSelector: '#ersize', minLength: 3 },
-            { selector: '#rate', errorSelector: '#errate', minLength: 2 },
-            { selector: '#description', errorSelector: '#erdescription', minLength: 3 }
-        ];
+    function validateSize() {
+        var value = $('#size').val();
+        var error = $('#ersize');
 
-        inputs.forEach(function (input) {
-            var value = $(input.selector).val();
-            var error = $(input.errorSelector);
+        if (value === '') {
+            error.text('Please enter a value.');
+            $('#size').css('border-color', 'red');
+            $('#size').focus();
+            return false;
+        } else if (value.length < 3) {
+            error.text('Must be at least 3 characters.');
+            return false;
+        } else {
+            error.text('');
+            $('#size').css('border-color', 'lightgray');
+            return true;
+        }
+    }
 
-            if (value === '') {
-                error.text('Please enter a value.');
-                $(input.selector).css('border-color', 'red');
-                $(input.selector).focus();
-                isValid = false;
-            } else if (value.length < input.minLength) {
-                error.text('Must be at least ' + input.minLength + ' characters.');
-                isValid = false;
-            } else {
-                error.text('');
-                $(input.selector).css('border-color', 'lightgray');
-            }
-        });
+    function validateRate() {
+        var value = parseFloat($('#rate').val());
+        var error = $('#errate');
 
+        if (isNaN(value) || value === 0) {
+            error.text('Rate must be a non-zero number.');
+            $('#rate').css('border-color', 'red');
+            $('#rate').focus();
+            return false;
+        } else {
+            error.text('');
+            $('#rate').css('border-color', 'lightgray');
+            return true;
+        }
+    }
+
+    function validateDescription() {
+        var value = $('#description').val();
+        var error = $('#erdescription');
+
+        if (value === '') {
+            error.text('Please enter a value.');
+            $('#description').css('border-color', 'red');
+            $('#description').focus();
+            return false;
+        } else if (value.length < 3) {
+            error.text('Must be at least 3 characters.');
+            return false;
+        } else {
+            error.text('');
+            $('#description').css('border-color', 'lightgray');
+            return true;
+        }
+    }
+
+    function validateOwner() {
         var ownerValue = $('#owner').val();
         var ownerError = $('#erowner');
 
@@ -246,12 +295,12 @@ $(document).ready(function () {
             ownerError.text('Please select an owner.');
             $('#owner').css('border-color', 'red');
             $('#owner').focus();
+            return false;
         } else {
             ownerError.text('');
             $('#owner').css('border-color', 'lightgray');
+            return true;
         }
-
-        return isValid;
     }
 
     function blockSpecialCharacter(e) {

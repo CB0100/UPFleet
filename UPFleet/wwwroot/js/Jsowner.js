@@ -4,7 +4,10 @@
     $('#formid').on('change', function () {
         GetValidation();
     });
-
+    $("#owner_name").blur(function () {
+        var selectedValue = $("#owner_name").val();
+        filldata(selectedValue);
+    });
 
     $("#owner_name").autocomplete({
         source: function (request, response) {
@@ -20,21 +23,8 @@
         select: function (event, ui) {
             // Handle the selected autocomplete suggestion
             var selectedValue = ui.item.value;
-
-            // Send the selected value to the MVC action using AJAX
-            $.ajax({
-                url: '/Maintenance/GetDetails',
-                type: 'GET',
-                data: { owner: selectedValue },
-                success: function (response) {
-                    if (response.ownerid != 0) {
-                        window.location.href = '/Maintenance/OwnerUpdate/' + response.ownerid;
-                    }
-                },
-                error: function (error) {
-                    console.error("Error sending data: " + error);
-                }
-            });
+            filldata(selectedValue);
+            
         }
     });
     $('#btnid').click(function () {
@@ -53,6 +43,22 @@
             validateField(account, $('#eraccount'), 'account', 1, true);
     }
 
+    function filldata(selectedValue) {
+        // Send the selected value to the MVC action using AJAX
+        $.ajax({
+            url: '/Maintenance/GetDetails',
+            type: 'GET',
+            data: { owner: selectedValue },
+            success: function (response) {
+                if (response.ownerid != 0) {
+                    window.location.href = '/Maintenance/OwnerUpdate/' + response.ownerid;
+                }
+            },
+            error: function (error) {
+                console.error("Error sending data: " + error);
+            }
+        });
+    }
     function validateField(value, errorElement, fieldName, minLength, isNumberField = false) {
         if (value === "") {
             errorElement.text('please enter ' + fieldName);
