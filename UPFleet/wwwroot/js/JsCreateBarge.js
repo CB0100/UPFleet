@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+
     $('#btnid').click(function () {
         var isBargeNameValid = validateBargeName();
         var isSizeValid = validateSize();
